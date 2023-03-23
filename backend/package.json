@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node src/database/index.ts",
+    "dev": "ts-node app.ts",
     "dev:watch": "npm run dev -- --watch src/*.ts",
     "build": "tsc",
     "build:watch": "tsc -w"
