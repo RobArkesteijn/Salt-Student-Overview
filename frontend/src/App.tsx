@@ -1,10 +1,9 @@
-import React from 'react';
-import './App.scss';
+import React from "react";
+import "./App.scss";
+import PrimarySearchAppBar from "./components/NavBar/NavBar";
 
 function App() {
-  return (
-    <h1>Salt Student Overview</h1>
-  );
+  return <PrimarySearchAppBar />;
 }
 
 export default App;
