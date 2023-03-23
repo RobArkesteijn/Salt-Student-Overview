@@ -13,7 +13,6 @@ import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import { Button, createTheme, ThemeProvider } from "@mui/material";
-import { display } from "@mui/system";
 
 const font = "'Inconsolata', monospace";
 const theme = createTheme({
@@ -46,6 +45,11 @@ export default function PrimarySearchAppBar() {
     setAnchorEl(null);
     handleMobileMenuClose();
   };
+  const handleMenuCloseLog = () => {
+    setAnchorEl(null);
+    handleMobileMenuClose();
+    setIsShown((current:Boolean) => !current);
+  };
 
   const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setMobileMoreAnchorEl(event.currentTarget);
@@ -71,6 +75,7 @@ export default function PrimarySearchAppBar() {
     >
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
       <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem onClick={handleMenuCloseLog}>Log Out</MenuItem>
     </Menu>
   );
 
@@ -143,7 +148,7 @@ export default function PrimarySearchAppBar() {
               variant="h6"
               noWrap
               component="div"
-              sx={{ display: { xs: "none", sm: "block" } }}
+              sx={{ display: { xs: "block", sm: "block" } }}
             >
               <p>&lt;/salt&gt;</p>
             </Typography>
@@ -153,7 +158,7 @@ export default function PrimarySearchAppBar() {
           <Button color="inherit">Login</Button>
         </Box>
 }
-      {isShown &&   <Box sx={{ display: { xs: "none", md: "block" } }}>
+      {isShown &&   <Box sx={{ display: { xs: "block", md: "block" } }}>
               <IconButton
                 size="large"
                 edge="end"
