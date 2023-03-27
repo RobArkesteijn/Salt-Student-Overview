@@ -5,7 +5,7 @@ import { Facebook, Instagram, LinkedIn, Mail } from "@mui/icons-material";
 import { grey } from "@mui/material/colors";
 import './Footer.scss'
 
-export const footer: FC = (): ReactElement => {
+export const Footer: FC = (): ReactElement => {
     const font = "'Inconsolata', monospace";
 const theme = createTheme({
   typography: {
@@ -76,4 +76,4 @@ const theme = createTheme({
   );
 };
 
-export default footer;
+export default Footer;

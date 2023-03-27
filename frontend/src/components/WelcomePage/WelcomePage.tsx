@@ -6,7 +6,7 @@ import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Unstable_Grid2';
 
 const StyledBox = styled(Box)({
-  margin: '0 16px',
+  margin: '20px 16px 40px 16px',
 });
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -16,12 +16,14 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
   transition: '0.2s ease-in-out',
   border: 'solid 1px transparent',
-  boxShadow: '0px 2px 1px -1px rgba(255,121,97,0.6), 0px 1px 1px 0px rgba(255,121,97,0.54), 0px 1px 3px 0px rgba(255,121,97,0.52)',
-  '&:hover': {
-    border: 'solid 1px black',
-    boxShadow: '5px 5px 0 0 rgb(255,121,97)',
-    color: theme.palette.text.primary,
-    backgroundColor: 'white',
+  boxShadow: '0px 2px 1px -1px rgba(255,121,97), 0px 1px 1px 0px rgba(255,121,97), 0px 1px 3px 0px rgba(255,121,97)',
+  '@media (min-width: 900px)': {
+    '&:hover': {
+      border: 'solid 1px black',
+      boxShadow: '5px 5px 0 0 rgb(255,121,97)',
+      color: theme.palette.text.primary,
+      backgroundColor: 'white',
+    },
   },
   '&.item-clicked': {
     border: 'solid 1px black',
@@ -45,7 +47,7 @@ function WelcomePage() {
     </div>
     <StyledBox sx={{ flexGrow: 1 }} className='box'>
       <Grid container spacing={3}>
-        <Grid xs={6} md={5}>
+        <Grid xs={12} sm={12} md={8} lg={5}>
           <Item onClick={() => setTestClicked(!testClicked)} className={`testresult ${testClicked ? 'item-clicked' : ''}`}>
           <h2 className='testresult-title'>Weekend Test Results</h2>
           <table className='testresult-table'>
@@ -67,14 +69,14 @@ function WelcomePage() {
           </table>
           </Item>
         </Grid>
-        <Grid xs={6} md={2}>
+        <Grid xs={12} sm={4} md={4} lg={2}>
           <Item onClick={() => setWDClicked(!WDClicked)} className={`weekdate ${WDClicked ? 'item-clicked' : ''}`}>
             <h3 className='weekdate-date'>Week</h3>
             <h1 className='weekdate-weeknumber'>8</h1>
             <h4 className='weekdate-day'>Friday</h4>
           </Item>
         </Grid>
-        <Grid xs={6} md={5}>
+        <Grid xs={12} sm={8} md={6} lg={5}>
           <Item onClick={() => setTopicClicked(!topicClicked)} className={`topic ${topicClicked ? 'item-clicked' : ''}`}>
             <h2 className='topic-title'>This Weeks Topics</h2>
             <div className='topic-container'>
@@ -91,7 +93,7 @@ function WelcomePage() {
             </div>
           </Item>
         </Grid>
-        <Grid xs={6} md={4}>
+        <Grid xs={12} sm={12} md={6} lg={4}>
           <Item onClick={() => setHLClicked(!HLClicked)} className={`highlight ${HLClicked ? 'item-clicked' : ''}`}>
             <h2 className='highlight-title'>Schedule For Today</h2>
             <div className='highlight-title-schedule'>
@@ -100,7 +102,7 @@ function WelcomePage() {
             </div>
           </Item>
         </Grid>
-        <Grid xs={6} md={8}>
+        <Grid xs={12} sm={12} md={12} lg={8}>
           <Item onClick={() => setCalenderClicked(!calenderClicked)} className={`highlight ${calenderClicked ? 'item-clicked' : ''}`}>
             <h1 className='calender-title'>This is the container for the Calender</h1>
           </Item>
