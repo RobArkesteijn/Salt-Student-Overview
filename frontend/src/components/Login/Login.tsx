@@ -2,6 +2,8 @@ import React from "react";
 import './Login.scss';
 import { TypeAnimation } from "react-type-animation";
 import { styled, TextField, Button } from "@mui/material";
+import { signInWithGoogle } from "../../firebase";
+import GoogleButton from "react-google-button"
 
 const CssTextField = styled(TextField) ({
   '& label.Mui-focused': {
@@ -72,7 +74,7 @@ const Login = () => {
       />
 
       <h1 className='title'>Student Overview</h1>
-
+      <br />
       <div className='login'>
         <h1>User Login</h1>
         <div className='loginForm'>
@@ -88,6 +90,8 @@ const Login = () => {
           <LoginButton>Login</LoginButton>
         </div>
       </div>
+      <br />
+      <GoogleButton onClick={signInWithGoogle}/>
     </div>
   );
 };

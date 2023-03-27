@@ -4,6 +4,10 @@ import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Unstable_Grid2';
+import PrimarySearchAppBar from "../NavBar/NavBar";
+import Footer from '../Footer/Footer';
+
+
 
 const StyledBox = styled(Box)({
   margin: '20px 16px 40px 16px',
@@ -42,8 +46,9 @@ function WelcomePage() {
 
   return (
   <>
+    <PrimarySearchAppBar />
     <div className='welcome'>
-      <h1 className='welcome-title'>welcome back user</h1>
+      <h1 className='welcome-title'>{`welcome back ${localStorage.getItem('name')?.split(' ')[0]}`}</h1>
     </div>
     <StyledBox sx={{ flexGrow: 1 }} className='box'>
       <Grid container spacing={3}>
@@ -51,21 +56,23 @@ function WelcomePage() {
           <Item onClick={() => setTestClicked(!testClicked)} className={`testresult ${testClicked ? 'item-clicked' : ''}`}>
           <h2 className='testresult-title'>Weekend Test Results</h2>
           <table className='testresult-table'>
-            <tr className='testresult-table-row'>
-              <td className='testresult-table-row-el testresult-table-row-el-green'>Week 1</td>
-              <td className='testresult-table-row-el testresult-table-row-el-green'>Week 4</td>
-              <td className='testresult-table-row-el testresult-table-row-el-green'>Week 7</td>
-            </tr>
-            <tr className='testresult-table-row'>
-              <td className='testresult-table-row-el testresult-table-row-el-green'>Week 2</td>
-              <td className='testresult-table-row-el testresult-table-row-el-green'>Week 5</td>
-              <td className='testresult-table-row-el testresult-table-row-el-undefined'>Week 8</td>
-            </tr>
-            <tr className='testresult-table-row'>
-              <td className='testresult-table-row-el testresult-table-row-el-green'>Week 3</td>
-              <td className='testresult-table-row-el testresult-table-row-el-red'>Week 6</td>
-              <td className='testresult-table-row-el testresult-table-row-el-undefined'>Week 9</td>
-            </tr>
+            <tbody>
+              <tr className='testresult-table-row'>
+                <td className='testresult-table-row-el testresult-table-row-el-green'>Week 1</td>
+                <td className='testresult-table-row-el testresult-table-row-el-green'>Week 4</td>
+                <td className='testresult-table-row-el testresult-table-row-el-green'>Week 7</td>
+              </tr>
+              <tr className='testresult-table-row'>
+                <td className='testresult-table-row-el testresult-table-row-el-green'>Week 2</td>
+                <td className='testresult-table-row-el testresult-table-row-el-green'>Week 5</td>
+                <td className='testresult-table-row-el testresult-table-row-el-undefined'>Week 8</td>
+              </tr>
+              <tr className='testresult-table-row'>
+                <td className='testresult-table-row-el testresult-table-row-el-green'>Week 3</td>
+                <td className='testresult-table-row-el testresult-table-row-el-red'>Week 6</td>
+                <td className='testresult-table-row-el testresult-table-row-el-undefined'>Week 9</td>
+              </tr>
+            </tbody>
           </table>
           </Item>
         </Grid>
@@ -109,6 +116,7 @@ function WelcomePage() {
         </Grid>
       </Grid>
     </StyledBox>
+    <Footer />
   </>
   )
 }

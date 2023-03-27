@@ -1,19 +1,18 @@
 import React from 'react';
 import './App.scss';
-import PrimarySearchAppBar from "./components/NavBar/NavBar";
+import { Route, Routes } from 'react-router-dom';
 import WelcomePage from './components/WelcomePage/WelcomePage';
-import Footer from './components/Footer/Footer';
+import Login from './components/Login/Login';
 
 function App() {
   return (
     <>
-      <PrimarySearchAppBar />
-      <WelcomePage />
-      <br />
-      <Footer />
+      <Routes>
+        <Route path="/" element={<WelcomePage />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
     </>
   );
-
 }
 
 export default App;
