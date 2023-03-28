@@ -12,7 +12,7 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
-import { Button, createTheme, ThemeProvider } from "@mui/material";
+import { Avatar, Button, createTheme, ThemeProvider } from "@mui/material";
 
 const font = "'Inconsolata', monospace";
 const theme = createTheme({
@@ -124,7 +124,7 @@ export default function PrimarySearchAppBar() {
           aria-haspopup="true"
           color="inherit"
         >
-          <AccountCircle />
+          <Avatar alt="Remy Sharp" src="https://picsum.photos/id/237/200/300" />
         </IconButton>
         <p>Profile</p>
       </MenuItem>
@@ -168,7 +168,7 @@ export default function PrimarySearchAppBar() {
                 onClick={handleProfileMenuOpen}
                 color="inherit"
               >
-                <AccountCircle/>
+                <Avatar alt="Remy Sharp" src="https://randomuser.me/api/portraits/lego/3.jpg" />
               </IconButton>
             </Box>}
             <Box sx={{ display: { xs: "none", md: "none" } }}>
