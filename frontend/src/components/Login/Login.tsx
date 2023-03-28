@@ -2,8 +2,9 @@ import React from "react";
 import './Login.scss';
 import { TypeAnimation } from "react-type-animation";
 import { styled, TextField, Button } from "@mui/material";
-import { signInWithGoogle } from "../../firebase";
-import GoogleButton from "react-google-button"
+import { signInWithGoogle, signOutUser } from "../../firebase";
+import GoogleButton from "react-google-button";
+import axios from "axios";
 
 const CssTextField = styled(TextField) ({
   '& label.Mui-focused': {
@@ -49,6 +50,15 @@ const Login = () => {
     }
   };
 
+  const handleLogin = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/calendar');
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className='content'>
       <TypeAnimation
@@ -91,7 +101,8 @@ const Login = () => {
         </div>
       </div>
       <br />
-      <GoogleButton onClick={signInWithGoogle}/>
+      <GoogleButton onClick={handleLogin}/>
+      {/* <button onClick={signOutUser}>Sign Out</button> */}
     </div>
   );
 };

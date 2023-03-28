@@ -7,8 +7,6 @@ import Grid from '@mui/material/Unstable_Grid2';
 import PrimarySearchAppBar from "../NavBar/NavBar";
 import Footer from '../Footer/Footer';
 
-
-
 const StyledBox = styled(Box)({
   margin: '20px 16px 40px 16px',
 });
@@ -111,7 +109,6 @@ function WelcomePage() {
         </Grid>
         <Grid xs={12} sm={12} md={12} lg={8}>
           <Item onClick={() => setCalenderClicked(!calenderClicked)} className={`highlight ${calenderClicked ? 'item-clicked' : ''}`}>
-            <h1 className='calender-title'>This is the container for the Calender</h1>
           </Item>
         </Grid>
       </Grid>
