@@ -1,5 +1,5 @@
 import express from 'express';
-import pool from './database/db';
+import db from './database';
 
 const app = express();
 const port = 8080;
@@ -7,15 +7,26 @@ const port = 8080;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-pool.connect();
+// pool.connect();
 
-app.get('/api/students', (req, res) => {
-  pool.query('SELECT * FROM public."Products"')
-    .then(result => res.send(result.rows))
-    .catch(error => {
-      console.log(error);
-      res.send(500).send('An error occured while retrieving the Student data');
-    });
+app.get('/api/users', async (req, res) => {
+  const users = await db.getAllUsers();
+  res.json(users);
+});
+
+app.get('/api/weekendtest', async (req, res) => {
+  const weekendTest = await db.getAllWeekendTest();
+  res.json(weekendTest);
+});
+
+app.get('/api/students', async (req, res) => {
+  const students = await db.getAllStudents();
+  res.json(students);
+});
+
+app.get('/api/courses', async (req, res) => {
+  const courses = await db.getAllCourses();
+  res.json(courses);
 });
 
 app.listen(port, () => console.log(`Running on http://localhost:${port}`));
