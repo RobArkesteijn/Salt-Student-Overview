@@ -12,6 +12,8 @@ import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import { Avatar, Button, createTheme, ThemeProvider } from "@mui/material";
+import { useSupabaseClient } from '@supabase/auth-helpers-react';
+
 
 const font = "'Inconsolata', monospace";
 const theme = createTheme({
@@ -54,8 +56,6 @@ export default function PrimarySearchAppBar() {
     setMobileMoreAnchorEl(event.currentTarget);
   };
   
-
-
   const menuId = "primary-search-account-menu";
   const renderMenu = (
     <Menu
@@ -130,10 +130,12 @@ export default function PrimarySearchAppBar() {
       </MenuItem>
     </Menu>
   );
-  console.log(localStorage.getItem('profilePic'));
-  return (
+  const supabase = useSupabaseClient();
   
-    
+  async function signOut() {
+    await supabase.auth.signOut();
+  }
+  return (
     <ThemeProvider theme={theme}>
       <Box sx={{ flexGrow: 1, fontFamily: "Inconsolata" }}>
         <AppBar position="static" style={{ background: "#ff7961" }}>

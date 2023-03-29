@@ -1,7 +1,11 @@
+/* eslint-disable import/prefer-default-export */
 import express from 'express';
 import pool from './database/db';
+import cors from 'cors';
 
-const app = express();
+
+export const app = express();
+app.use(cors());
 const port = 8080;
 
 app.use(express.json());
@@ -14,7 +18,7 @@ app.get('/api/students', (req, res) => {
     .then(result => res.send(result.rows))
     .catch(error => {
       console.log(error);
-      res.send(500).send('An error occured while retrieving the Student data');
+      res.send(500).send('An error occurred while retrieving the Student data');
     });
 });
 
