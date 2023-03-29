@@ -76,22 +76,12 @@ const Login = () => {
       <h1 className='title'>Student Overview</h1>
       <br />
       <div className='login'>
-        <h1>User Login</h1>
-        <div className='loginForm'>
-          <CssTextField label="Username" id="custom-css-outlined-input" variant="standard"/>
-        </div>
-        <br />
-        <div className='loginForm'>
-          <CssTextField label="Password" id="custom-css-outlined-input" variant="standard"/>
-        </div>
-        <br />
-        <br />
-        <div className='loginButtonDiv'>
-          <LoginButton>Login</LoginButton>
-        </div>
+        <GoogleButton
+        onClick={signInWithGoogle}
+        style={{backgroundColor: '#ff7961'}}
+        />
       </div>
       <br />
-      <GoogleButton onClick={signInWithGoogle}/>
     </div>
   );
 };

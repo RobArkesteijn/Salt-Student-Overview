@@ -55,14 +55,8 @@ span {
 }
 
 .login {
-  display: flex;
-  justify-content: space-evenly;
-  flex-direction: column;
-  background-color: white;
-  border: 1px solid rgb(220, 220, 220);
   animation: 3.8s ease 0s normal forwards 1 login;
   padding: 10px 50px 30px 50px;
-  width: 250px;
 }
 
 @keyframes login {
