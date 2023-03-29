@@ -8,7 +8,6 @@ import Badge from "@mui/material/Badge";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
-import AccountCircle from "@mui/icons-material/AccountCircle";
 import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
@@ -54,6 +53,7 @@ export default function PrimarySearchAppBar() {
   const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
+  
 
 
   const menuId = "primary-search-account-menu";
@@ -73,9 +73,9 @@ export default function PrimarySearchAppBar() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+      <MenuItem onClick={handleMenuClose}><a href="/Profile" style={{color:"#000000de"}}>Profile</a></MenuItem>
       <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-      <MenuItem onClick={handleMenuCloseLog}>Log Out</MenuItem>
+      <MenuItem onClick={handleMenuCloseLog}><a href="/login" style={{color:"#000000de"}}>Log Out</a></MenuItem>
     </Menu>
   );
 
@@ -130,7 +130,10 @@ export default function PrimarySearchAppBar() {
       </MenuItem>
     </Menu>
   );
+  console.log(localStorage.getItem('profilePic'));
   return (
+  
+    
     <ThemeProvider theme={theme}>
       <Box sx={{ flexGrow: 1, fontFamily: "Inconsolata" }}>
         <AppBar position="static" style={{ background: "#ff7961" }}>
@@ -168,7 +171,8 @@ export default function PrimarySearchAppBar() {
                 onClick={handleProfileMenuOpen}
                 color="inherit"
               >
-                <Avatar alt="Remy Sharp" src="https://randomuser.me/api/portraits/lego/3.jpg" />
+                <Avatar alt="Remy Sharp" src={(localStorage.getItem('profilePic')!)} />
+                
               </IconButton>
             </Box>}
             <Box sx={{ display: { xs: "none", md: "none" } }}>
