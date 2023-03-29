@@ -4,6 +4,7 @@ import { TypeAnimation } from "react-type-animation";
 import { styled, TextField, Button } from "@mui/material";
 import GoogleButton from "react-google-button";
 import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react';
+import GoogleIcon from '@mui/icons-material/Google';
 
 
 const CssTextField = styled(TextField) ({
@@ -95,22 +96,8 @@ const Login = () => {
       <h1 className='title'>Student Overview</h1>
       <br />
       <div className='login'>
-        <h1>User Login</h1>
-        <div className='loginForm'>
-          <CssTextField label="Username" id="custom-css-outlined-input" variant="standard"/>
-        </div>
-        <br />
-        <div className='loginForm'>
-          <CssTextField label="Password" id="custom-css-outlined-input" variant="standard"/>
-        </div>
-        <br />
-        <br />
-        <div className='loginButtonDiv'>
-          <LoginButton>Login</LoginButton>
-        </div>
+        <LoginButton onClick={() => googleSignIn()}><GoogleIcon className="googleIcon"/>Sign in with Google</LoginButton>
       </div>
-      <br />
-      <GoogleButton onClick={() => googleSignIn()}/>
     </div>
   );
 };
