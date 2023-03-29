@@ -2,8 +2,9 @@ import React from "react";
 import './Login.scss';
 import { TypeAnimation } from "react-type-animation";
 import { styled, TextField, Button } from "@mui/material";
-import { signInWithGoogle } from "../../firebase";
-import GoogleButton from "react-google-button"
+import GoogleButton from "react-google-button";
+import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react';
+
 
 const CssTextField = styled(TextField) ({
   '& label.Mui-focused': {
@@ -49,6 +50,24 @@ const Login = () => {
     }
   };
 
+  const session = useSession();
+  const supabase = useSupabaseClient();
+
+  async function googleSignIn() {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        scopes: 'https://www.googleapis.com/auth/calendar'
+      }
+    });
+    if(error) {
+      alert("Error logging in to Google provider with Supabase");
+      console.log(error);
+    }
+  }
+
+  console.log(session);
+
   return (
     <div className='content'>
       <TypeAnimation
@@ -91,7 +110,7 @@ const Login = () => {
         </div>
       </div>
       <br />
-      <GoogleButton onClick={signInWithGoogle}/>
+      <GoogleButton onClick={() => googleSignIn()}/>
     </div>
   );
 };

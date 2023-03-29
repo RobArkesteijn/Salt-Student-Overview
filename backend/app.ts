@@ -1,7 +1,9 @@
+/* eslint-disable import/prefer-default-export */
 import express from 'express';
 import db from './database';
 
-const app = express();
+export const app = express();
+app.use(cors());
 const port = 8080;
 
 app.use(express.json());
@@ -28,5 +30,6 @@ app.get('/api/courses', async (req, res) => {
   const courses = await db.getAllCourses();
   res.json(courses);
 });
+
 
 app.listen(port, () => console.log(`Running on http://localhost:${port}`));

@@ -1,6 +1,6 @@
 
 import React, { FC, ReactElement } from "react";
-import { Box, Button, Container, createTheme, Grid, Link, styled, ThemeProvider, Typography, withStyles } from "@mui/material";
+import { Box, Button, Container, createTheme, Grid, Link, styled, ThemeProvider, Typography } from "@mui/material";
 import { Facebook, Instagram, LinkedIn, Mail } from "@mui/icons-material";
 import { grey } from "@mui/material/colors";
 import './Footer.scss'
