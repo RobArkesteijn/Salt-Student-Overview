@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import './WelcomePage.scss'
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -6,6 +6,9 @@ import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Unstable_Grid2';
 import PrimarySearchAppBar from "../NavBar/NavBar";
 import Footer from '../Footer/Footer';
+import { useSession } from '@supabase/auth-helpers-react';
+import DateTimePicker from 'react-datetime-picker';
+import dayjs from 'dayjs';
 
 const StyledBox = styled(Box)({
   margin: '20px 16px 40px 16px',
@@ -35,18 +38,97 @@ const Item = styled(Paper)(({ theme }) => ({
   },
 }));
 
+
+interface gapiType {
+  summary: string,
+  date: string
+}
+
 function WelcomePage() {
   const [testClicked, setTestClicked] = useState(false);
   const [WDClicked, setWDClicked] = useState(false);
   const [topicClicked, setTopicClicked] = useState(false);
   const [HLClicked, setHLClicked] = useState(false);
-  const [calenderClicked, setCalenderClicked] = useState(false);
+  const [calendarClicked, setCalendarClicked] = useState(false);
+  const [eventsClicked, setEventsClicked] = useState(false);
+
+  const [start, setStart] = useState(new Date());
+  const [end, setEnd] = useState(new Date());
+  const [eventName, setEventName] = useState("");
+  const [eventDescription, setEventDescription] = useState("");
+  const [weeksEvents, setWeeksEvents] = useState<gapiType[]>();
+  const [reFetchCalendar, setReFetchCalendar] = useState(false);
+
+  const session = useSession();
+  const name = session?.user.email?.split('.')[0];
+
+  async function createCalendarEvent() {
+    const event = {
+      'summary': eventName,
+      'description': eventDescription,
+      'start': {
+        'dateTime': start.toISOString(),
+        'timeZone': Intl.DateTimeFormat().resolvedOptions().timeZone
+      },
+      'end': {
+        'dateTime': end.toISOString(),
+        'timeZone': Intl.DateTimeFormat().resolvedOptions().timeZone
+      }
+    }
+    await fetch("https://www.googleapis.com/calendar/v3/calendars/primary/events", {
+      method: "POST",
+      headers: {
+        'Authorization':'Bearer ' + session?.provider_token
+      },
+      body: JSON.stringify(event)
+    }).then((data) => {
+      return data.json();
+    }).then((data) => {
+      console.log(data);
+    });
+    setReFetchCalendar(!reFetchCalendar);
+  }
+
+  useEffect(() => {
+    async function getCalendarEvent() {
+      if (session?.provider_token) {
+        console.log("Creating calendar event");
+        const startOfWeek = dayjs().startOf('week');
+        const endOfWeek = dayjs().endOf('week');
+        const params = new URLSearchParams({
+          "timeMin": startOfWeek.toISOString(),
+          "timeMax": endOfWeek.toISOString(),
+          "maxResults": '10',
+          "singleEvents": true.toString(),
+          "orderBy": 'startTime',
+        });
+        await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events?${params}`, {
+          method: "GET",
+          headers: {
+            'Authorization':'Bearer ' + session?.provider_token // Access token for google
+          }
+        }).then((data) => {
+          return data.json();
+        }).then((data) => {
+          const weeksEvents: gapiType[] = data.items.map((item: any) => {
+            return {
+              summary: item.summary,
+              date: item.start.dateTime
+            };
+          });
+        
+          setWeeksEvents(weeksEvents);
+        });
+      }
+    }
+    getCalendarEvent()
+  }, [session?.provider_token, reFetchCalendar]);
 
   return (
   <>
     <PrimarySearchAppBar />
     <div className='welcome'>
-      <h1 className='welcome-title'>{`welcome back ${localStorage.getItem('name')?.split(' ')[0]}`}</h1>
+      <h1 className='welcome-title'>{`welcome back ${name}`}</h1>
     </div>
     <StyledBox sx={{ flexGrow: 1 }} className='box'>
       <Grid container spacing={3}>
@@ -98,17 +180,48 @@ function WelcomePage() {
             </div>
           </Item>
         </Grid>
-        <Grid xs={12} sm={12} md={6} lg={4}>
+        <Grid xs={12} sm={12} md={6} lg={6}>
           <Item onClick={() => setHLClicked(!HLClicked)} className={`highlight ${HLClicked ? 'item-clicked' : ''}`}>
             <h2 className='highlight-title'>Schedule For Today</h2>
-            <div className='highlight-title-schedule'>
-              <h4 className='highlight-title-schedule-el'>09:00 - Morning Lecture JSFS Area</h4>
-              <h4 className='highlight-title-schedule-el'>13:30 - Mock Interview</h4>
+            <div className='highlight-schedule'>
+              <h4 className='highlight-schedule-el'>09:00 - Morning Lecture JSFS Area</h4>
+              <h4 className='highlight-schedule-el'>13:30 - Mock Interview</h4>
             </div>
           </Item>
         </Grid>
-        <Grid xs={12} sm={12} md={12} lg={8}>
-          <Item onClick={() => setCalenderClicked(!calenderClicked)} className={`highlight ${calenderClicked ? 'item-clicked' : ''}`}>
+        <Grid xs={12} sm={12} md={6} lg={6}>
+          <Item onClick={() => setCalendarClicked(!calendarClicked)} className={`calendar ${calendarClicked ? 'item-clicked' : ''}`}>
+            <h2 className='calendar-title'>Schedule this week</h2>
+            {weeksEvents &&
+              <div className='calendar-schedule'>
+              {weeksEvents.map((event: gapiType, index) => {
+                const date = new Date(event.date).toLocaleString().toString().split(',');
+                return (
+                <div className='calendar-schedule-box'>
+                  <p className='calendar-schedule-box-day calendar-schedule-box-el'>{`${date[0].split('/').slice(0,2).join('/')}`}</p>
+                  <p>|</p>
+                  <p className='calendar-schedule-box-time calendar-schedule-box-el'>{`${date[1].split(':').slice(0,2).join(':')}`}</p>
+                  <p>|</p>
+                  <p className='calendar-schedule-box-time calendar-schedule-box-el'>{event.summary}</p>
+                </div>
+                )
+              })}
+            </div>
+            }
+          </Item>
+        </Grid>
+        <Grid xs={12} sm={12} md={12} lg={12}>
+          <Item onClick={() => setEventsClicked(!eventsClicked)} className={`events ${eventsClicked ? 'item-clicked' : ''}`}>
+            <p>Start of your event</p>
+            <DateTimePicker onChange={setStart} value={start} />
+            <p>End of your event</p>
+            <DateTimePicker onChange={setEnd} value={end} />
+            <p>Event name</p>
+            <input type="text" onChange={(e) => setEventName(e.target.value)} />
+            <p>Event description</p>
+            <input type="text" onChange={(e) => setEventDescription(e.target.value)} />
+            <br />
+            <button onClick={() => createCalendarEvent()}>Create Calendar Event</button>
           </Item>
         </Grid>
       </Grid>

@@ -2,9 +2,9 @@ import React from "react";
 import './Login.scss';
 import { TypeAnimation } from "react-type-animation";
 import { styled, TextField, Button } from "@mui/material";
-import { signInWithGoogle, signOutUser } from "../../firebase";
 import GoogleButton from "react-google-button";
-import axios from "axios";
+import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react';
+
 
 const CssTextField = styled(TextField) ({
   '& label.Mui-focused': {
@@ -50,14 +50,23 @@ const Login = () => {
     }
   };
 
-  const handleLogin = async () => {
-    try {
-      const response = await axios.get('http://localhost:8080/calendar');
-      console.log(response.data);
-    } catch (error) {
-      console.error(error);
+  const session = useSession();
+  const supabase = useSupabaseClient();
+
+  async function googleSignIn() {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        scopes: 'https://www.googleapis.com/auth/calendar'
+      }
+    });
+    if(error) {
+      alert("Error logging in to Google provider with Supabase");
+      console.log(error);
     }
-  };
+  }
+
+  console.log(session);
 
   return (
     <div className='content'>
@@ -101,8 +110,7 @@ const Login = () => {
         </div>
       </div>
       <br />
-      <GoogleButton onClick={handleLogin}/>
-      {/* <button onClick={signOutUser}>Sign Out</button> */}
+      <GoogleButton onClick={() => googleSignIn()}/>
     </div>
   );
 };

@@ -13,6 +13,7 @@ import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import { Button, createTheme, ThemeProvider } from "@mui/material";
+import { useSupabaseClient } from '@supabase/auth-helpers-react';
 
 const font = "'Inconsolata', monospace";
 const theme = createTheme({
@@ -130,6 +131,13 @@ export default function PrimarySearchAppBar() {
       </MenuItem>
     </Menu>
   );
+
+  const supabase = useSupabaseClient();
+  
+  async function signOut() {
+    await supabase.auth.signOut();
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ flexGrow: 1, fontFamily: "Inconsolata" }}>
