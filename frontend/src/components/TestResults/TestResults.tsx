@@ -7,6 +7,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import Grid from '@mui/material/Unstable_Grid2';
 import { Masonry } from '@mui/lab';
 import { useState, useEffect } from 'react';
+import PrimarySearchAppBar from "../NavBar/NavBar";
 
 const TestResults = () => {
   const [open, setOpen] = React.useState(false);
@@ -203,6 +204,7 @@ const TestResults = () => {
 
   return (
     <>
+    <PrimarySearchAppBar/>
     <div className='weekendTest'>
         <Masonry columns={2} spacing={2}>
           <Item>{resultsPerWeek}</Item>
