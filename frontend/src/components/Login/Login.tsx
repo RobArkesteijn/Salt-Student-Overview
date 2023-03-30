@@ -1,28 +1,9 @@
 import React from "react";
 import './Login.scss';
 import { TypeAnimation } from "react-type-animation";
-import { styled, TextField, Button } from "@mui/material";
-import GoogleButton from "react-google-button";
+import { styled, Button } from "@mui/material";
 import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react';
 import GoogleIcon from '@mui/icons-material/Google';
-
-
-const CssTextField = styled(TextField) ({
-  '& label.Mui-focused': {
-    color: "black",
-  },
-  '& .MuiInput-underline:after': {
-    borderBottomColor: "#ff7961",
-  },
-  '& .MuiOutlinedInput-root': {
-    '& fieldset': {
-      borderColor: "black",
-    },
-    '&.Mui-focused fieldset': {
-      borderColor: "#ff7961",
-    },
-  },
-});
 
 const LoginButton = styled(Button) ({
   "&.MuiButton-root": {

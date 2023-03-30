@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import "./ProfileSetting.scss";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
@@ -7,10 +7,9 @@ import Button from "@mui/material/Button";
 import { TextField } from "@mui/material";
 import Footer from "../Footer/Footer";
 import Navbar from "../NavBar/NavBar";
-import { useSession } from "@supabase/auth-helpers-react";
 
 const ProfileSetting = () => {
-  const [image, setImage] = React.useState("");
+  const [image, setImage] = React.useState(localStorage.getItem('picture'));
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && file.type.substring(0, 5) === "image") {
@@ -20,8 +19,6 @@ const ProfileSetting = () => {
       setImage("");
     }
   };
-  const session = useSession();
-  const name = session?.user.email?.split(".")[0];
 
   return (
     <>
@@ -33,8 +30,7 @@ const ProfileSetting = () => {
               <img id="prf-bg-img" src="Image/SALT.jpg" alt="salt" />
             </div>
             <div className="user-profile-image">
-              <img id="prf-img" src={image} alt="" srcSet="" />
-
+              <img id="prf-img" src={image!} alt="" srcSet="" />
               <input
                 type="file"
                 accept="/image/*"
@@ -50,7 +46,7 @@ const ProfileSetting = () => {
                 required
                 id="outlined-required"
                 label="Name"
-                defaultValue={name}
+                defaultValue={localStorage.getItem('name')}
                 color="warning"
               />
               <TextField
@@ -58,7 +54,7 @@ const ProfileSetting = () => {
                 required
                 id="outlined-required"
                 label="Last name"
-                defaultValue="Lavi"
+                defaultValue={localStorage.getItem('lastName')}
                 color="warning"
               />
               <TextField

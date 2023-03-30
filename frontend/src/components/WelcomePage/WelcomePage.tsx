@@ -1,3 +1,4 @@
+/* eslint-disable no-lone-blocks */
 import React, { useState, useEffect } from 'react'
 import './WelcomePage.scss'
 import Box from '@mui/material/Box';
@@ -88,7 +89,15 @@ function WelcomePage() {
   const [reFetchCalendar, setReFetchCalendar] = useState(false);
 
   const session = useSession();
-  const name = session?.user.email?.split('.')[0];
+  const name = session?.user.user_metadata.name.split(' ')[0];
+  const lastName = session?.user.user_metadata.name.split(' ')[1];
+  const profilePicture = session?.user.user_metadata.picture;
+  function capitalizeFirstLetter(str: string) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+  {profilePicture && localStorage.setItem('picture', profilePicture)};
+  {name && localStorage.setItem('name', capitalizeFirstLetter(name))};
+  {lastName && localStorage.setItem('lastName', capitalizeFirstLetter(lastName))};
 
   async function createCalendarEvent() {
     const event = {
