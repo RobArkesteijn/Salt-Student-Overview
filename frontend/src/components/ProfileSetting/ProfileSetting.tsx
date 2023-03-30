@@ -7,6 +7,7 @@ import Button from "@mui/material/Button";
 import Footer from "../Footer/Footer";
 import Navbar from "../NavBar/NavBar";
 import axios from "axios";
+import { Typography } from "@mui/material";
 
 type UserData = {
   id: number,
@@ -113,30 +114,35 @@ const ProfileSetting = () => {
               />
             </div>
           </div>
-          <Card sx={{ marginTop: "4px" }}>
+          <Card sx={{ }}>
             <CardContent className="CardContent">
+              <div className="firstColoumn">
+                <Typography>name:</Typography>
               <input
                 className="TextField"
                 required
                 id="outlined-required"
                 defaultValue={name}
-                color="warning"
+                
               />
+              <Typography>Last name:</Typography>
               <input
                 className="TextField"
                 required
                 id="outlined-required"
                 defaultValue={lastName}
-                color="warning"
               />
+              <Typography>Email:</Typography>
               <input
                 className="TextField"
                 id="outlined-email-input"
                 type="email"
                 defaultValue={email}
                 autoComplete="current-email"
-                color="warning"
+                
               />
+              
+              <Typography>Course:</Typography>
               <input
                 className="TextField"
                 disabled
@@ -144,18 +150,25 @@ const ProfileSetting = () => {
                 defaultValue={courseName}
                 color="warning"
               />
+              </div>
+              <div className="firstColoumn">
+              <Typography>Mob name:</Typography>
               <input
                 className="TextField"
                 disabled
                 id="outlined-disabled"
                 defaultValue={mobName}
               />
+              <Typography>Instructors:</Typography>
+                            
               <input
                 className="TextField"
                 disabled
                 id="outlined-disabled"
                 defaultValue="Wietse,Dasha"
               />
+               <Typography>Mob Members:</Typography>
+
               <input
                 className="TextField"
                 disabled
@@ -163,12 +176,8 @@ const ProfileSetting = () => {
                 defaultValue={momMembers.join(' - ')}
                 color="warning"
               />
+              </div>
             </CardContent>
-            <CardActions className="button-container">
-              <Button variant="outlined" color="error" className="button">
-                Update
-              </Button>
-            </CardActions>
           </Card>
         </div>
       </div>
