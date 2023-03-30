@@ -158,12 +158,12 @@ export default function PrimarySearchAppBar() {
               <p>&lt;/salt&gt;</p>
             </Typography>
             <Box sx={{ flexGrow: 1 }} />
-            {!(isShown) &&
+            {/* {!(isShown) &&
         <Box sx= {{display: "block"}} onClick={handelLogInButton}>
           <Button color="inherit">Login</Button>
         </Box>
-}
-      {isShown &&   <Box sx={{ display: { xs: "block", md: "block" } }}>
+} */}
+        <Box sx={{ display: { xs: "block", md: "block" } }}>
               <IconButton
                 size="large"
                 edge="end"
@@ -176,7 +176,7 @@ export default function PrimarySearchAppBar() {
                 <Avatar alt="Remy Sharp" src={(localStorage.getItem('profilePic')!)} />
                 
               </IconButton>
-            </Box>}
+            </Box>
             <Box sx={{ display: { xs: "none", md: "none" } }}>
               <IconButton
                 size="large"
