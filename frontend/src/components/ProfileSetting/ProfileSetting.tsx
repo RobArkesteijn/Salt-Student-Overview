@@ -1,15 +1,35 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import "./ProfileSetting.scss";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
-import { TextField } from "@mui/material";
 import Footer from "../Footer/Footer";
 import Navbar from "../NavBar/NavBar";
+import axios from "axios";
+
+type UserData = {
+  id: number,
+  email: string,
+  first_name: string,
+  last_name:string,
+  Role:string,
+  mob_id:number,
+  course_id:number,
+};
+
+type MobUsers = {
+  id: number,
+  email: string,
+  first_name: string,
+  last_name:string,
+  Role:string,
+  mob_name: string,
+  mob_id: number
+};
 
 const ProfileSetting = () => {
-  const [image, setImage] = React.useState(localStorage.getItem('picture'));
+  const [image, setImage] = useState(localStorage.getItem('picture'));
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && file.type.substring(0, 5) === "image") {
@@ -19,6 +39,60 @@ const ProfileSetting = () => {
       setImage("");
     }
   };
+
+  const [name, setName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [mobNumber, setMobNumber] = useState('');
+  const [mobName, setMobName] = useState('');
+  const [momMembers, setMobMembers] = useState([]);
+  const [courseNumber, setCourseNumber] = useState('');
+  const [courseName, setCourseName] = useState('');
+
+  useEffect(() => {
+    async function getUserData() {
+      axios.get('http://localhost:8080/api/users')
+        .then((data) => {
+          const user = data.data.filter((user: UserData) => {
+            return user.email === localStorage.getItem('email');
+          });
+          setName(user[0].first_name);
+          setLastName(user[0].last_name);
+          setEmail(user[0].email);
+          setMobNumber(user[0].mob_id);
+          setCourseNumber(user[0].course_id);
+        })
+    }
+    getUserData();
+  }, []);
+
+  useEffect(() => {
+    async function getMobData() {
+      if (mobNumber !== '') {
+        axios.get(`http://localhost:8080/api/mobusers/${mobNumber}`)
+        .then((data) => {
+          const mobMembers = data.data.map((member: MobUsers) => {
+            return `${member.first_name} ${member.last_name}`;
+          })
+          setMobName(data.data[0].mob_name);
+          setMobMembers(mobMembers);
+        })
+      }
+    };
+    getMobData();
+  }, [mobNumber]);
+
+  useEffect(() => {
+    async function getClassData() {
+      if (courseNumber !== '') {
+        axios.get(`http://localhost:8080/api/courseusers/${courseNumber}`)
+        .then((data) => {
+          setCourseName(data.data[0].name);
+        })
+      }
+    }
+    getClassData();
+  }, [courseNumber])
 
   return (
     <>
@@ -41,58 +115,52 @@ const ProfileSetting = () => {
           </div>
           <Card sx={{ marginTop: "4px" }}>
             <CardContent className="CardContent">
-              <TextField
+              <input
                 className="TextField"
                 required
                 id="outlined-required"
-                label="Name"
-                defaultValue={localStorage.getItem('name')}
+                defaultValue={name}
                 color="warning"
               />
-              <TextField
+              <input
                 className="TextField"
                 required
                 id="outlined-required"
-                label="Last name"
-                defaultValue={localStorage.getItem('lastName')}
+                defaultValue={lastName}
                 color="warning"
               />
-              <TextField
+              <input
                 className="TextField"
-                id="outlined-password-input"
-                label="Password"
-                type="password"
-                autoComplete="current-password"
+                id="outlined-email-input"
+                type="email"
+                defaultValue={email}
+                autoComplete="current-email"
                 color="warning"
               />
-              <TextField
+              <input
                 className="TextField"
                 disabled
                 id="outlined-disabled"
-                label="BootCamp"
-                defaultValue="JavaScript-fullStack-Winter"
+                defaultValue={courseName}
                 color="warning"
               />
-              <TextField
+              <input
                 className="TextField"
                 disabled
                 id="outlined-disabled"
-                label="GroupName"
-                defaultValue="Pasta"
+                defaultValue={mobName}
               />
-              <TextField
+              <input
                 className="TextField"
                 disabled
                 id="outlined-disabled"
-                label="Instructors"
                 defaultValue="Wietse,Dasha"
               />
-              <TextField
+              <input
                 className="TextField"
                 disabled
                 id="outlined-disabled"
-                label="MobMembers"
-                defaultValue="Rob,Ariano"
+                defaultValue={momMembers.join(' - ')}
                 color="warning"
               />
             </CardContent>

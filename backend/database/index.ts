@@ -20,6 +20,16 @@ const getAllCourses = async () => {
   return courses;
 };
 
+const findUsersByMobId = async (mobId:string) => {
+  const mobUsers = await db.findUsersByMobId(mobId);
+  return mobUsers;
+};
+
+const findCoursesById = async (courseId:string) => {
+  const courseUsers = await db.findCoursesById(courseId);
+  return courseUsers;
+};
+
 const index = () => console.log('test');
 
 export default {
@@ -28,4 +38,6 @@ export default {
   getAllWeekendTest,
   getAllStudents,
   getAllCourses,
+  findUsersByMobId,
+  findCoursesById
 };

@@ -15,7 +15,9 @@ type Result = {
   email: string,
   first_name: string,
   last_name:string,
-  Role:string
+  Role:string,
+  mob_id:number,
+  course_id:number,
 };
 
 type WeekendTest = {
@@ -37,6 +39,27 @@ type Course = {
   name: string,
 };
 
+type MobUsers = {
+  id: number,
+  email: string,
+  first_name: string,
+  last_name:string,
+  Role:string,
+  mob_name: string,
+  mob_id: number
+};
+
+type CoursesUsers = {
+  id: number,
+  email: string,
+  first_name: string,
+  last_name:string,
+  Role:string,
+  mob_id:number,
+  course_id:number,
+  name:string
+};
+
 const getAllUsers = async () => {
   const client = await pool.connect();
   const result:{ rowCount: number, rows: Result[] } = await client.query('SELECT * FROM "SaltDB"."Users"');
@@ -52,6 +75,8 @@ const getAllUsers = async () => {
       first_name: row.first_name as string,
       last_name: row.last_name as string,
       Role: row.Role as string,
+      mob_id:row.mob_id as number,
+      course_id:row.course_id as number,
     };
     return userRow;
   });
@@ -112,11 +137,56 @@ const getAllCourses = async () => {
   });
 };
 
-// pool.query('SELECT * FROM "SaltDB"."Courses"', (err, res) => {
+const findCoursesById = async (courseId:string) => {
+  const client = await pool.connect();
+  const result = await client.query('SELECT * FROM "SaltDB"."Users" FULL OUTER JOIN "SaltDB"."Courses" ON "SaltDB"."Courses"."id" = "SaltDB"."Users"."course_id" WHERE course_id=$1', [courseId]);
+  if (result.rowCount === 0) {
+    return undefined;
+  }
+  client.release();
+  const { rows } = result;
+  return rows.map(row => {
+    const courseUserRows : CoursesUsers = {
+      id: row.id as number,
+      email: row.email as string,
+      first_name: row.first_name as string,
+      last_name: row.last_name as string,
+      Role: row.Role as string,
+      mob_id: row.mob_id as number,
+      course_id: row.course_id as number,
+      name: row.name as string  
+    };
+    return courseUserRows;
+  });
+};
+
+const findUsersByMobId = async (mobId:string) => {
+  const client = await pool.connect();
+  const result = await client.query('SELECT * FROM "SaltDB"."Users" FULL OUTER JOIN "SaltDB"."Mob" ON "SaltDB"."Mob"."id" = "SaltDB"."Users"."mob_id" WHERE mob_id=$1', [mobId]);
+  if (result.rowCount === 0) {
+    return undefined;
+  }
+  client.release();
+  const { rows } = result;
+  return rows.map(row => {
+    const mobRows : MobUsers = {
+      id: row.id as number,
+      email: row.email as string,
+      first_name: row.first_name as string,
+      last_name: row.last_name as string,
+      Role: row.Role as string,
+      mob_id: row.mob_id as number,
+      mob_name: row.mob_name as string,
+    };
+    return mobRows;
+  });
+};
+// pool.query('SELECT * FROM "SaltDB"."Users" FULL OUTER
+// JOIN "SaltDB"."Mob" ON "SaltDB"."Mob"."id" = "SaltDB"."Users"."mob_id"', (err, res) => {
 //   if (err) {
-//     console.log('Courses', err);
+//     console.log('mob', err);
 //   } else {
-//     console.log('Courses', res);
+//     console.log('mobs', res);
 //   }
 // });
 
@@ -125,4 +195,6 @@ export default {
   getAllWeekendTest,
   getAllStudents,
   getAllCourses,
+  findUsersByMobId,
+  findCoursesById,
 };

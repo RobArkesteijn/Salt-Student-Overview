@@ -89,15 +89,14 @@ function WelcomePage() {
   const [reFetchCalendar, setReFetchCalendar] = useState(false);
 
   const session = useSession();
-  const name = session?.user.user_metadata.name.split(' ')[0];
-  const lastName = session?.user.user_metadata.name.split(' ')[1];
   const profilePicture = session?.user.user_metadata.picture;
+  const email = session?.user.email;
+  {email && localStorage.setItem('email', email)};
+  {profilePicture && localStorage.setItem('picture', profilePicture)};
+
   function capitalizeFirstLetter(str: string) {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
-  {profilePicture && localStorage.setItem('picture', profilePicture)};
-  {name && localStorage.setItem('name', capitalizeFirstLetter(name))};
-  {lastName && localStorage.setItem('lastName', capitalizeFirstLetter(lastName))};
 
   async function createCalendarEvent() {
     const event = {
@@ -216,7 +215,7 @@ function WelcomePage() {
   <>
     <PrimarySearchAppBar />
     <div className='welcome'>
-      <h1 className='welcome-title'>{`welcome back ${name}`}</h1>
+      {session && <h1 className='welcome-title'>{`welcome back ${capitalizeFirstLetter(session?.user.user_metadata.name.split(' ')[0])}`}</h1>}
     </div>
     <StyledBox sx={{ flexGrow: 1 }} className='box'>
       <Grid container spacing={3}>
