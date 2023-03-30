@@ -12,7 +12,8 @@ import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import { Avatar, Button, createTheme, ThemeProvider } from "@mui/material";
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react';
+
 
 
 const font = "'Inconsolata', monospace";
@@ -23,6 +24,15 @@ const theme = createTheme({
 });
 
 export default function PrimarySearchAppBar() {
+  const supabase = useSupabaseClient();
+  const session = useSession();
+  console.log(session);
+
+  async function signOut() {
+    localStorage.clear();
+    await supabase.auth.signOut();
+  }
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
     React.useState<null | HTMLElement>(null);
@@ -75,7 +85,7 @@ export default function PrimarySearchAppBar() {
     >
       <MenuItem onClick={handleMenuClose}><a href="/Profile" style={{color:"#000000de"}}>Profile</a></MenuItem>
       <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-      <MenuItem onClick={handleMenuCloseLog}><a href="/login" style={{color:"#000000de"}}>Log Out</a></MenuItem>
+      <MenuItem onClick={handleMenuCloseLog}><a href="/login" onClick={() => signOut()} style={{color:"#000000de"}}>Log Out</a></MenuItem>
     </Menu>
   );
 
@@ -130,11 +140,7 @@ export default function PrimarySearchAppBar() {
       </MenuItem>
     </Menu>
   );
-  const supabase = useSupabaseClient();
   
-  async function signOut() {
-    await supabase.auth.signOut();
-  }
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ flexGrow: 1, fontFamily: "Inconsolata" }}>
@@ -173,7 +179,7 @@ export default function PrimarySearchAppBar() {
                 onClick={handleProfileMenuOpen}
                 color="inherit"
               >
-                <Avatar alt="Remy Sharp" src={(localStorage.getItem('profilePic')!)} />
+                <Avatar alt="Remy Sharp" src={(session?.user.user_metadata.picture)} />
                 
               </IconButton>
             </Box>}

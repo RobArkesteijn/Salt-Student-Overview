@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import './WelcomePage.scss'
-import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Unstable_Grid2';
@@ -9,6 +8,8 @@ import Footer from '../Footer/Footer';
 import { useSession } from '@supabase/auth-helpers-react';
 import DateTimePicker from 'react-datetime-picker';
 import dayjs from 'dayjs';
+import { styled, TextField, Button } from "@mui/material";
+
 
 const StyledBox = styled(Box)({
   margin: '20px 16px 40px 16px',
@@ -38,10 +39,36 @@ const Item = styled(Paper)(({ theme }) => ({
   },
 }));
 
+const CssTextField = styled(TextField) ({
+  '& label.Mui-focused': {
+    color: "black",
+  },
+  '& .MuiInput-underline:after': {
+    borderBottomColor: "#ff7961",
+  },
+  '& .MuiOutlinedInput-root': {
+    '& fieldset': {
+      borderColor: "black",
+    },
+    '&.Mui-focused fieldset': {
+      borderColor: "#ff7961",
+    },
+  },
+});
+
+const LoginButton = styled(Button) ({
+  "&.MuiButton-root": {
+    backgroundColor: "#ff7961"
+  },
+  "&.MuiButton-text": {
+    color: "white"
+  },
+});
 
 interface gapiType {
   summary: string,
-  date: string
+  date: string,
+  id: string,
 }
 
 function WelcomePage() {
@@ -57,6 +84,7 @@ function WelcomePage() {
   const [eventName, setEventName] = useState("");
   const [eventDescription, setEventDescription] = useState("");
   const [weeksEvents, setWeeksEvents] = useState<gapiType[]>();
+  const [dayEvents, setDayEvents] = useState<gapiType[]>();
   const [reFetchCalendar, setReFetchCalendar] = useState(false);
 
   const session = useSession();
@@ -82,6 +110,7 @@ function WelcomePage() {
       },
       body: JSON.stringify(event)
     }).then((data) => {
+      console.log(data);
       return data.json();
     }).then((data) => {
       console.log(data);
@@ -89,8 +118,22 @@ function WelcomePage() {
     setReFetchCalendar(!reFetchCalendar);
   }
 
+  async function deleteEvent(id: string) {
+    await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${id}`, {
+      method: "DELETE",
+      headers: {
+        'Authorization':'Bearer ' + session?.provider_token
+      },
+    }).then((data) => {
+      console.log(data);
+    }).then((data) => {
+      console.log(data);
+    });
+    setReFetchCalendar(!reFetchCalendar);
+  }
+
   useEffect(() => {
-    async function getCalendarEvent() {
+    async function getCalendarEventWeek() {
       if (session?.provider_token) {
         console.log("Creating calendar event");
         const startOfWeek = dayjs().startOf('week');
@@ -98,22 +141,23 @@ function WelcomePage() {
         const params = new URLSearchParams({
           "timeMin": startOfWeek.toISOString(),
           "timeMax": endOfWeek.toISOString(),
-          "maxResults": '10',
           "singleEvents": true.toString(),
           "orderBy": 'startTime',
         });
         await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events?${params}`, {
           method: "GET",
           headers: {
-            'Authorization':'Bearer ' + session?.provider_token // Access token for google
+            'Authorization':'Bearer ' + session?.provider_token
           }
         }).then((data) => {
           return data.json();
         }).then((data) => {
+          console.log(data);
           const weeksEvents: gapiType[] = data.items.map((item: any) => {
             return {
               summary: item.summary,
-              date: item.start.dateTime
+              date: item.start.dateTime,
+              id: item.id,
             };
           });
         
@@ -121,7 +165,42 @@ function WelcomePage() {
         });
       }
     }
-    getCalendarEvent()
+    getCalendarEventWeek()
+  }, [session?.provider_token, reFetchCalendar]);
+
+  useEffect(() => {
+    async function getCalendarEventDay() {
+      if (session?.provider_token) {
+        console.log("Creating calendar event");
+        const startOfDay = dayjs().startOf('day');
+        const endOfDay = dayjs().endOf('day');
+        const params = new URLSearchParams({
+          "timeMin": startOfDay.toISOString(),
+          "timeMax": endOfDay.toISOString(),
+          "singleEvents": true.toString(),
+          "orderBy": 'startTime',
+        });
+        await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events?${params}`, {
+          method: "GET",
+          headers: {
+            'Authorization':'Bearer ' + session?.provider_token
+          }
+        }).then((data) => {
+          return data.json();
+        }).then((data) => {
+          const dayEvents: gapiType[] = data.items.map((item: any) => {
+            return {
+              summary: item.summary,
+              date: item.start.dateTime,
+              id: item.id,
+            };
+          });
+        
+          setDayEvents(dayEvents);
+        });
+      }
+    }
+    getCalendarEventDay()
   }, [session?.provider_token, reFetchCalendar]);
 
   return (
@@ -183,45 +262,61 @@ function WelcomePage() {
         <Grid xs={12} sm={12} md={6} lg={6}>
           <Item onClick={() => setHLClicked(!HLClicked)} className={`highlight ${HLClicked ? 'item-clicked' : ''}`}>
             <h2 className='highlight-title'>Schedule For Today</h2>
-            <div className='highlight-schedule'>
-              <h4 className='highlight-schedule-el'>09:00 - Morning Lecture JSFS Area</h4>
-              <h4 className='highlight-schedule-el'>13:30 - Mock Interview</h4>
-            </div>
+            {dayEvents && dayEvents.length !== 0 ?
+              <div className='highlight-schedule'>
+                {dayEvents!.map((event: gapiType, index) => {
+                const date = new Date(event.date).toLocaleString().toString().split(',');
+                  return (
+                    <h4 className='highlight-schedule-el'>{`${date[1].split(':').slice(0,2).join(':')} - ${event.summary}`}</h4>
+                  )
+                })}
+              </div>
+              :
+              <p className='highlight-empty'>No appointments today!</p>
+            }
           </Item>
         </Grid>
-        <Grid xs={12} sm={12} md={6} lg={6}>
+        <Grid xs={12} sm={12} md={12} lg={6}>
           <Item onClick={() => setCalendarClicked(!calendarClicked)} className={`calendar ${calendarClicked ? 'item-clicked' : ''}`}>
             <h2 className='calendar-title'>Schedule this week</h2>
-            {weeksEvents &&
+            {weeksEvents && weeksEvents.length !== 0 ?
               <div className='calendar-schedule'>
               {weeksEvents.map((event: gapiType, index) => {
                 const date = new Date(event.date).toLocaleString().toString().split(',');
                 return (
-                <div className='calendar-schedule-box'>
-                  <p className='calendar-schedule-box-day calendar-schedule-box-el'>{`${date[0].split('/').slice(0,2).join('/')}`}</p>
-                  <p>|</p>
-                  <p className='calendar-schedule-box-time calendar-schedule-box-el'>{`${date[1].split(':').slice(0,2).join(':')}`}</p>
-                  <p>|</p>
-                  <p className='calendar-schedule-box-time calendar-schedule-box-el'>{event.summary}</p>
-                </div>
+                <ul className='calendar-schedule-box'>
+                  <li className='calendar-schedule-box-day calendar-schedule-box-el'>{`${date[0].split('/').slice(0,2).join('/')}`}</li>
+                  <li className='calendar-schedule-box-time calendar-schedule-box-el'>{`${date[1].split(':').slice(0,2).join(':')}`}</li>
+                  <li className='calendar-schedule-box-summary calendar-schedule-box-el'>{event.summary}</li>
+                  <button className='calendar-schedule-box-button' onClick={() => deleteEvent(event.id)}>Delete</button>
+                </ul>
                 )
               })}
             </div>
+            :
+            <h2 className='calendar-empty'>There is nothing in your calendar this week</h2>
             }
           </Item>
         </Grid>
         <Grid xs={12} sm={12} md={12} lg={12}>
           <Item onClick={() => setEventsClicked(!eventsClicked)} className={`events ${eventsClicked ? 'item-clicked' : ''}`}>
-            <p>Start of your event</p>
-            <DateTimePicker onChange={setStart} value={start} />
-            <p>End of your event</p>
-            <DateTimePicker onChange={setEnd} value={end} />
-            <p>Event name</p>
-            <input type="text" onChange={(e) => setEventName(e.target.value)} />
-            <p>Event description</p>
-            <input type="text" onChange={(e) => setEventDescription(e.target.value)} />
+            <h2 className='events-title'>Set a new event for your Calendar</h2>
+            <div className='events-timeset'>
+              <div className='events-timeset-input'>
+                <p className='events-timeset-input-title'>Start of your event</p>
+                <DateTimePicker onChange={setStart} value={start} />
+              </div>
+              <div className='events-timeset-input'>
+                <p className='events-timeset-input-title'>End of your event</p>
+                <DateTimePicker onChange={setEnd} value={end} />
+              </div>
+            </div>
+            <div className='events-summary'>
+              <CssTextField label="Event name" variant='standard' onChange={(e) => setEventName(e.target.value)}/>
+              <CssTextField label="Event description" variant='standard' onChange={(e) => setEventDescription(e.target.value)}/>
+            </div>
             <br />
-            <button onClick={() => createCalendarEvent()}>Create Calendar Event</button>
+            <LoginButton onClick={() => createCalendarEvent()}>Create Event</LoginButton>
           </Item>
         </Grid>
       </Grid>
