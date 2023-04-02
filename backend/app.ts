@@ -58,4 +58,33 @@ app.get('/api/courseusers/:id', async (req, res) => {
   }
 });
 
+app.get('/api/weekendtestcourse/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const test = await db.findTestByCourseId(id);
+    if (!test) {
+      res.status(404).json({ message: 'not found' });
+    } else {
+      res.json(test);
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'An error occurred while fetching data' });
+  }
+});
+
+app.get('/api/previoustests/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const tests = await db.findPreviousTestsById(id);
+    if (!tests) {
+      res.status(404).json({ message: 'not found'});
+    } else {
+      res.json(tests);
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'An error occurred while fetching data' });
+  }
+});
+
 app.listen(port, () => console.log(`Running on http://localhost:${port}`));

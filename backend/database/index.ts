@@ -30,6 +30,16 @@ const findCoursesById = async (courseId:string) => {
   return courseUsers;
 };
 
+const findTestByCourseId = async (courseId:string) => {
+  const test = await db.findTestByCourseId(courseId);
+  return test;
+};
+
+const findPreviousTestsById = async (userId:string) => {
+  const tests = await db.findPreviousTestsById(userId);
+  return tests;
+};
+
 const index = () => console.log('test');
 
 export default {
@@ -39,5 +49,7 @@ export default {
   getAllStudents,
   getAllCourses,
   findUsersByMobId,
-  findCoursesById
+  findCoursesById,
+  findTestByCourseId,
+  findPreviousTestsById
 };

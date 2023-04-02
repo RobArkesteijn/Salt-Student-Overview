@@ -21,11 +21,12 @@ type Result = {
 };
 
 type WeekendTest = {
-  describtion:string,
   id: number,
   name: string,
+  repo_name: string,
   repo_url: string,
-  courser_id:number,
+  course_ids: number[],
+  ongoing: boolean
 };
 
 type Student = {
@@ -60,6 +61,23 @@ type CoursesUsers = {
   name:string
 };
 
+type PreviousTest = {
+  id: number,
+  user_id: number,
+  test_id: number,
+  feedback: string,
+  result: string
+}
+
+type PreviousTestUser = {
+  id: number,
+  name: string,
+  user_id: number,
+  test_id: number,
+  feedback: string,
+  result: string
+}
+
 const getAllUsers = async () => {
   const client = await pool.connect();
   const result:{ rowCount: number, rows: Result[] } = await client.query('SELECT * FROM "SaltDB"."Users"');
@@ -92,11 +110,12 @@ const getAllWeekendTest = async () => {
   const { rows } = result;
   return rows.map(row => {
     const weekendTestRow : WeekendTest = {
-      describtion: row.describtion as string,
       id: row.id as number,
       name: row.name as string,
+      repo_name: row.repo_name as string,
       repo_url: row.repo_url as string,
-      courser_id: row.courser_id as number,
+      course_ids: row.course_ids as number[],
+      ongoing: row.ongoing as boolean
     };
     return weekendTestRow;
   });
@@ -181,6 +200,50 @@ const findUsersByMobId = async (mobId:string) => {
     return mobRows;
   });
 };
+
+const findTestByCourseId = async (courseId: string) => {
+  const client = await pool.connect();
+  const result:{ rowCount: number, rows: WeekendTest[] } = await client.query(`SELECT * FROM "SaltDB"."WeekendTests" WHERE $1 = ANY(course_ids);`, [courseId]);
+  if (result.rowCount === 0) {
+    return [];
+  }
+  client.release();
+  const { rows } = result;
+  return rows.map(row => {
+    const weekendTestRow : WeekendTest = {
+      id: row.id as number,
+      name: row.name as string,
+      repo_name: row.repo_name as string,
+      repo_url: row.repo_url as string,
+      course_ids: row.course_ids as number[],
+      ongoing: row.ongoing as boolean,
+    };
+    return weekendTestRow;
+  });
+};
+
+const findPreviousTestsById = async (userId: string) => {
+  const client = await pool.connect();
+  // const result:{ rowCount: number, rows: PreviousTest[] } = await client.query(`SELECT * FROM "SaltDB"."TestFeedbacks" WHERE user_id=$1`, [Number(userId)]);
+  const result:{ rowCount: number, rows: PreviousTestUser[] } = await client.query(`SELECT * FROM "SaltDB"."TestFeedbacks" INNER JOIN "SaltDB"."WeekendTests" ON "SaltDB"."TestFeedbacks".test_id="SaltDB"."WeekendTests".id WHERE "SaltDB"."TestFeedbacks".user_id = $1`, [userId]);
+  if (result.rowCount === 0) {
+    return [];
+  }
+  client.release();
+  const { rows } = result;
+  return rows.map(row => {
+    const testFeedbackRow : PreviousTestUser = {
+      id: row.id as number,
+      name: row.name as string,
+      user_id: row.user_id as number,
+      test_id: row.test_id as number,
+      feedback: row.feedback as string,
+      result: row.result as string
+    };
+    return testFeedbackRow;
+  })
+};
+
 // pool.query('SELECT * FROM "SaltDB"."Users" FULL OUTER
 // JOIN "SaltDB"."Mob" ON "SaltDB"."Mob"."id" = "SaltDB"."Users"."mob_id"', (err, res) => {
 //   if (err) {
@@ -197,4 +260,6 @@ export default {
   getAllCourses,
   findUsersByMobId,
   findCoursesById,
+  findTestByCourseId,
+  findPreviousTestsById
 };
