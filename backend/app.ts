@@ -87,4 +87,9 @@ app.get('/api/previoustests/:id', async (req, res) => {
   }
 });
 
+app.get('/api/alluserdetails', async (req, res) => {
+  const users = await db.getAllUserDetails();
+  res.json(users);
+});
+
 app.listen(port, () => console.log(`Running on http://localhost:${port}`));

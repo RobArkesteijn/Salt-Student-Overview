@@ -244,6 +244,28 @@ const findPreviousTestsById = async (userId: string) => {
   })
 };
 
+const getAllUserDetails = async () => {
+  const client = await pool.connect();
+  const result:{ rowCount: number, rows: MobUsers[] }= await client.query(`SELECT * FROM "SaltDB"."Users" INNER JOIN "SaltDB"."Mob" ON "SaltDB"."Users".mob_id = "SaltDB"."Mob".id`);
+  if (result.rowCount === 0) {
+    return [];
+  }
+  client.release();
+  const { rows } = result;
+  return rows.map(row => {
+    const mobRows : MobUsers = {
+      id: row.id as number,
+      email: row.email as string,
+      first_name: row.first_name as string,
+      last_name: row.last_name as string,
+      Role: row.Role as string,
+      mob_id: row.mob_id as number,
+      mob_name: row.mob_name as string,
+    };
+    return mobRows;
+  });
+};
+
 // pool.query('SELECT * FROM "SaltDB"."Users" FULL OUTER
 // JOIN "SaltDB"."Mob" ON "SaltDB"."Mob"."id" = "SaltDB"."Users"."mob_id"', (err, res) => {
 //   if (err) {
@@ -261,5 +283,6 @@ export default {
   findUsersByMobId,
   findCoursesById,
   findTestByCourseId,
-  findPreviousTestsById
+  findPreviousTestsById,
+  getAllUserDetails
 };

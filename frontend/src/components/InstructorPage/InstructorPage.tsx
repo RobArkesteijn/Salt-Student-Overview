@@ -1,5 +1,5 @@
 import { Paper, Table, TableCell, TableContainer, TableHead, TableRow, Button, TableBody, TableSortLabel, FormControl, Select, MenuItem, InputLabel, TextField, SelectChangeEvent, Grid, styled } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PrimarySearchAppBar from "../NavBar/NavBar";
 import './InstructorPage.scss';
 
@@ -9,6 +9,16 @@ type Data = {
   mobGroup: string;
   course: string;
 };
+
+type UserDetails = {
+  id: number,
+  email: string,
+  first_name: string,
+  last_name:string,
+  Role:string,
+  mob_name: string,
+  mob_id: number
+}
 
 type Order = 'asc' | 'desc';
 
@@ -28,6 +38,16 @@ const InstructorPage = () => {
   const [orderBy, setOrderBy] = useState<keyof Data>('name');
   const [searchTerm, setSearchTerm] = useState('');
   const [courseFilter, setCourseFilter] = useState('');
+  const [userDetails, setUserDetails] = useState([]);
+
+  // useEffect(() => {
+  //   const getAllUserDetails = async () => {
+  //       const response = await fetch(`http://localhost:8080/api/alluserdetails`)
+  //       const data = await response.json();
+  //       setUserDetails(data);
+  //   };
+  //   getAllUserDetails();
+  // }, []);
 
   const handleSort = (property: keyof Data) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -147,6 +167,9 @@ const InstructorPage = () => {
               </TableRow>
             </TableHead>
             <TableBody>
+              {/* {userDetails.map((item: UserDetails) => (
+                <p>{JSON.stringify(item.first_name)}</p>
+              ))} */}
               {sortedRows.map((row) => (
                 <TableRow key={row.name}>
                   <TableCell>{row.name}</TableCell>
