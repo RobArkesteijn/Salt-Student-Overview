@@ -1,9 +1,10 @@
-import { Paper, Table, TableCell, TableContainer, TableHead, TableRow, Button, TableBody, TableSortLabel, FormControl, Select, MenuItem, InputLabel, TextField, SelectChangeEvent } from "@mui/material";
+import { Paper, Table, TableCell, TableContainer, TableHead, TableRow, Button, TableBody, TableSortLabel, FormControl, Select, MenuItem, InputLabel, TextField, SelectChangeEvent, Grid, styled } from "@mui/material";
 import React, { useState } from "react";
 import PrimarySearchAppBar from "../NavBar/NavBar";
 import './InstructorPage.scss';
 
 type Data = {
+  id: number;
   name: string;
   mobGroup: string;
   course: string;
@@ -11,15 +12,15 @@ type Data = {
 
 type Order = 'asc' | 'desc';
 
-function createData(name: string, mobGroup: string, course: string): Data {
-  return { name, mobGroup, course };
+function createData(id: number, name: string, mobGroup: string, course: string): Data {
+  return { id, name, mobGroup, course };
 }
 
 const rows = [
-  createData('John', 'Mob A', 'jsfs'),
-  createData('Jane', 'Mob B', 'jfs'),
-  createData('Mark', 'Mob C', 'dnfs'),
-  createData('Mary', 'Mob D', 'jfs'),
+  createData(1, 'John', 'Mob A', 'jsfs'),
+  createData(2, 'Jane', 'Mob B', 'jfs'),
+  createData(3, 'Mark', 'Mob C', 'dnfs'),
+  createData(4, 'Mary', 'Mob D', 'jfs'),
 ];
 
 const InstructorPage = () => {
@@ -43,7 +44,7 @@ const InstructorPage = () => {
   };
 
   const filteredRows = rows.filter((row) =>
-    row.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+    (row.name.toLowerCase().includes(searchTerm.toLowerCase()) || row.mobGroup.toLowerCase().includes(searchTerm.toLowerCase())) &&
     (courseFilter === '' || row.course === courseFilter)
   );
   
@@ -58,79 +59,106 @@ const InstructorPage = () => {
     }
   });
 
+  const SaltInput = styled(TextField) ({
+    "& .MuiFilledInput-underline:after": {
+      borderBottomColor: 'rgb(255, 121, 97)'
+    },
+    "& label.Mui-focused": {
+      color: 'rgb(255, 121, 97)'
+    },
+  })
+
+  const SaltSelect = styled(FormControl) ({
+    "& .MuiFilledInput-underline:after": {
+      borderBottomColor: 'rgb(255, 121, 97)'
+    },
+    "& label.Mui-focused": {
+      color: 'rgb(255, 121, 97)'
+    },
+  })
+
   return (
     <>
-      <TextField
-        label="Search"
-        variant="outlined"
-        value={searchTerm}
-        onChange={handleSearch}
-        style={{ marginBottom: '1rem' }}
-      />
+      <PrimarySearchAppBar/>
+      <div className='instructorContent'>
+        <Grid container style={{textAlign: 'center', marginBottom: '20px'}}>
+          <Grid xs={6} style={{paddingRight: '10px'}}>
+            <SaltInput
+              label="Search"
+              variant="filled"
+              value={searchTerm}
+              onChange={handleSearch}
+              style={{ width: '100%'}}
+            />
+          </Grid>
 
-      <FormControl variant="outlined" style={{ marginBottom: '1rem' }}>
-        <InputLabel id="course-filter-label">Course</InputLabel>
-        <Select
-          labelId="course-filter-label"
-          id="course-filter"
-          value={courseFilter}
-          onChange={handleFilter}
-          label="Course"
-        >
-          <MenuItem value="">All</MenuItem>
-          <MenuItem value="jsfs">JSFS</MenuItem>
-          <MenuItem value="jfs">JFS</MenuItem>
-          <MenuItem value="dnfs">DNFS</MenuItem>
-        </Select>
-      </FormControl>
+          <Grid xs={6} style={{paddingLeft: '10px'}}>
+            <SaltSelect variant="filled" style={{ width: '100%'}}>
+              <InputLabel id="course-filter-label">Course</InputLabel>
+              <Select
+                labelId="course-filter-label"
+                id="course-filter"
+                value={courseFilter}
+                onChange={handleFilter}
+                label="Course"
+              >
+                <MenuItem value="">All</MenuItem>
+                <MenuItem value="jsfs">JSFS</MenuItem>
+                <MenuItem value="jfs">JFS</MenuItem>
+                <MenuItem value="dnfs">DNFS</MenuItem>
+              </Select>
+            </SaltSelect>
+          </Grid>
+        </Grid>
 
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>
-                <TableSortLabel
-                  active={orderBy === 'name'}
-                  direction={order}
-                  onClick={() => handleSort('name')}
-                >
-                  Name
-                </TableSortLabel>
-              </TableCell>
-              <TableCell>
-                <TableSortLabel
-                  active={orderBy === 'mobGroup'}
-                  direction={order}
-                  onClick={() => handleSort('mobGroup')}
-                >
-                  Mob Group
-                </TableSortLabel>
-              </TableCell>
-              <TableCell>
-                <TableSortLabel
-                  active={orderBy === 'course'}
-                  direction={order}
-                  onClick={() => handleSort('course')}
-                >
-                  Course
-                </TableSortLabel>
-              </TableCell>
-              <TableCell>
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {sortedRows.map((row) => (
-              <TableRow key={row.name}>
-                <TableCell>{row.name}</TableCell>
-                <TableCell>{row.mobGroup}</TableCell>
-                <TableCell>{row.course}</TableCell>
-                <TableCell><Button variant='contained'>Edit</Button></TableCell>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>
+                  <TableSortLabel
+                    active={orderBy === 'name'}
+                    direction={order}
+                    onClick={() => handleSort('name')}
+                  >
+                    Name
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell>
+                  <TableSortLabel
+                    active={orderBy === 'mobGroup'}
+                    direction={order}
+                    onClick={() => handleSort('mobGroup')}
+                  >
+                    Mob Group
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell>
+                  <TableSortLabel
+                    active={orderBy === 'course'}
+                    direction={order}
+                    onClick={() => handleSort('course')}
+                  >
+                    Course
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell>
+                </TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {sortedRows.map((row) => (
+                <TableRow key={row.name}>
+                  <TableCell>{row.name}</TableCell>
+                  <TableCell>{row.mobGroup}</TableCell>
+                  <TableCell>{row.course}</TableCell>
+                  <TableCell style={{width: '120px'}}><Button variant='contained' style={{backgroundColor: 'rgb(255, 121, 97)'}}>Edit {row.id}</Button></TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </div>
     </>
   );
 };
