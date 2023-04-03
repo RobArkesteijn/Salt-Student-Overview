@@ -3,13 +3,6 @@ import React, { useEffect, useState } from "react";
 import PrimarySearchAppBar from "../NavBar/NavBar";
 import './InstructorPage.scss';
 
-type Data = {
-  id: number;
-  name: string;
-  mobGroup: string;
-  course: string;
-};
-
 type UserDetails = {
   id: number,
   email: string,
@@ -17,39 +10,29 @@ type UserDetails = {
   last_name:string,
   Role:string,
   mob_name: string,
-  mob_id: number
+  mob_id: number,
+  name: string
 }
 
 type Order = 'asc' | 'desc';
 
-function createData(id: number, name: string, mobGroup: string, course: string): Data {
-  return { id, name, mobGroup, course };
-}
-
-const rows = [
-  createData(1, 'John', 'Mob A', 'jsfs'),
-  createData(2, 'Jane', 'Mob B', 'jfs'),
-  createData(3, 'Mark', 'Mob C', 'dnfs'),
-  createData(4, 'Mary', 'Mob D', 'jfs'),
-];
-
 const InstructorPage = () => {
   const [order, setOrder] = useState<Order>('asc');
-  const [orderBy, setOrderBy] = useState<keyof Data>('name');
+  const [orderBy, setOrderBy] = useState<keyof UserDetails>('first_name');
   const [searchTerm, setSearchTerm] = useState('');
   const [courseFilter, setCourseFilter] = useState('');
   const [userDetails, setUserDetails] = useState([]);
 
-  // useEffect(() => {
-  //   const getAllUserDetails = async () => {
-  //       const response = await fetch(`http://localhost:8080/api/alluserdetails`)
-  //       const data = await response.json();
-  //       setUserDetails(data);
-  //   };
-  //   getAllUserDetails();
-  // }, []);
+  useEffect(() => {
+    const getAllUserDetails = async () => {
+        const response = await fetch(`http://localhost:8080/api/alluserdetails`)
+        const data = await response.json();
+        setUserDetails(data);
+    };
+    getAllUserDetails();
+  }, []);
 
-  const handleSort = (property: keyof Data) => {
+  const handleSort = (property: keyof UserDetails) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
@@ -63,12 +46,12 @@ const InstructorPage = () => {
     setCourseFilter(event.target.value);
   };
 
-  const filteredRows = rows.filter((row) =>
-    (row.name.toLowerCase().includes(searchTerm.toLowerCase()) || row.mobGroup.toLowerCase().includes(searchTerm.toLowerCase())) &&
-    (courseFilter === '' || row.course === courseFilter)
+  const filteredRows = userDetails.filter((item: UserDetails) =>
+    (item.first_name.toLowerCase().includes(searchTerm.toLowerCase()) || item.mob_name.toLowerCase().includes(searchTerm.toLowerCase())) &&
+    (courseFilter === '' || item.name.toLowerCase() === courseFilter)
   );
   
-  const sortedRows = filteredRows.sort((a, b) => {
+  const sortedRows = filteredRows.sort((a: UserDetails, b: UserDetails) => {
     const orderFactor = order === 'asc' ? 1 : -1;
     const aValue = a[orderBy];
     const bValue = b[orderBy];
@@ -79,14 +62,14 @@ const InstructorPage = () => {
     }
   });
 
-  const SaltInput = styled(TextField) ({
-    "& .MuiFilledInput-underline:after": {
-      borderBottomColor: 'rgb(255, 121, 97)'
-    },
-    "& label.Mui-focused": {
-      color: 'rgb(255, 121, 97)'
-    },
-  })
+  // const SaltInput = styled(TextField) ({
+  //   "& .MuiFilledInput-underline:after": {
+  //     borderBottomColor: 'rgb(255, 121, 97)'
+  //   },
+  //   "& label.Mui-focused": {
+  //     color: 'rgb(255, 121, 97)'
+  //   },
+  // })
 
   const SaltSelect = styled(FormControl) ({
     "& .MuiFilledInput-underline:after": {
@@ -103,8 +86,8 @@ const InstructorPage = () => {
       <div className='instructorContent'>
         <Grid container style={{textAlign: 'center', marginBottom: '20px'}}>
           <Grid xs={6} style={{paddingRight: '10px'}}>
-            <SaltInput
-              label="Search"
+            <TextField
+              label="Search student / mob group"
               variant="filled"
               value={searchTerm}
               onChange={handleSearch}
@@ -137,27 +120,27 @@ const InstructorPage = () => {
               <TableRow>
                 <TableCell>
                   <TableSortLabel
-                    active={orderBy === 'name'}
+                    active={orderBy === 'first_name'}
                     direction={order}
-                    onClick={() => handleSort('name')}
+                    onClick={() => handleSort('first_name')}
                   >
                     Name
                   </TableSortLabel>
                 </TableCell>
                 <TableCell>
                   <TableSortLabel
-                    active={orderBy === 'mobGroup'}
+                    active={orderBy === 'mob_name'}
                     direction={order}
-                    onClick={() => handleSort('mobGroup')}
+                    onClick={() => handleSort('mob_name')}
                   >
                     Mob Group
                   </TableSortLabel>
                 </TableCell>
                 <TableCell>
                   <TableSortLabel
-                    active={orderBy === 'course'}
+                    active={orderBy === 'name'}
                     direction={order}
-                    onClick={() => handleSort('course')}
+                    onClick={() => handleSort('name')}
                   >
                     Course
                   </TableSortLabel>
@@ -167,15 +150,12 @@ const InstructorPage = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {/* {userDetails.map((item: UserDetails) => (
-                <p>{JSON.stringify(item.first_name)}</p>
-              ))} */}
-              {sortedRows.map((row) => (
-                <TableRow key={row.name}>
+              {sortedRows.map((row: UserDetails) => (
+                <TableRow key={row.first_name}>
+                  <TableCell>{row.first_name}</TableCell>
+                  <TableCell>{row.mob_name}</TableCell>
                   <TableCell>{row.name}</TableCell>
-                  <TableCell>{row.mobGroup}</TableCell>
-                  <TableCell>{row.course}</TableCell>
-                  <TableCell style={{width: '120px'}}><Button variant='contained' style={{backgroundColor: 'rgb(255, 121, 97)'}}>Edit {row.id}</Button></TableCell>
+                  <TableCell style={{width: '140px'}}><Button variant='contained' style={{backgroundColor: 'rgb(255, 121, 97)'}}>Edit {row.id}</Button></TableCell>
                 </TableRow>
               ))}
             </TableBody>

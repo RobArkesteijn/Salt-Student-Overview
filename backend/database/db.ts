@@ -47,7 +47,8 @@ type MobUsers = {
   last_name:string,
   Role:string,
   mob_name: string,
-  mob_id: number
+  mob_id: number,
+  name: string
 };
 
 type CoursesUsers = {
@@ -196,6 +197,7 @@ const findUsersByMobId = async (mobId:string) => {
       Role: row.Role as string,
       mob_id: row.mob_id as number,
       mob_name: row.mob_name as string,
+      name: row.name as string,
     };
     return mobRows;
   });
@@ -246,7 +248,14 @@ const findPreviousTestsById = async (userId: string) => {
 
 const getAllUserDetails = async () => {
   const client = await pool.connect();
-  const result:{ rowCount: number, rows: MobUsers[] }= await client.query(`SELECT * FROM "SaltDB"."Users" INNER JOIN "SaltDB"."Mob" ON "SaltDB"."Users".mob_id = "SaltDB"."Mob".id`);
+  const result:{ rowCount: number, rows: MobUsers[] } =
+    await client.query(`SELECT * FROM "SaltDB"."Users"
+      INNER JOIN "SaltDB"."Mob"
+      ON "SaltDB"."Users".mob_id = "SaltDB"."Mob".id
+      INNER JOIN "SaltDB"."Courses"
+      ON "SaltDB"."Users".course_id = "SaltDB"."Courses".id`
+      );
+
   if (result.rowCount === 0) {
     return [];
   }
@@ -261,6 +270,7 @@ const getAllUserDetails = async () => {
       Role: row.Role as string,
       mob_id: row.mob_id as number,
       mob_name: row.mob_name as string,
+      name: row.name as string
     };
     return mobRows;
   });
