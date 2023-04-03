@@ -35,7 +35,13 @@ type PreviousTestsData = {
 
 const TestResults = () => {
   const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
+  const [modalName, setModalName] = useState('');
+  const [modalFeedback, setModalFeedback] = useState('');
+  const handleOpen = (name: string, feedback: string) => {
+    setOpen(true)
+    setModalName(name);
+    setModalFeedback(feedback);
+  };
   const handleClose = () => setOpen(false);
   const [courseNumber, setCourseNumber] = useState('');
   const [user, setUser] = useState('');
@@ -205,13 +211,16 @@ const TestResults = () => {
                 {feedback && feedback.map((item: PreviousTestsData) => (
                   <Grid xs={3}>
                     <div className='test'>
-                      <PreviousTestButton onClick={handleOpen} className={item.result + 'Text'}>{item.name}</PreviousTestButton>
+                      <PreviousTestButton onClick={() => handleOpen(item.name, item.feedback)} className={item.result + 'Text'}>{item.name}</PreviousTestButton>
                       {/* {item.result === 'green' ?
                         <CheckIcon></CheckIcon>
                       : <CloseIcon></CloseIcon>
                       } */}
                     </div>
-                    <Modal
+                  </Grid>
+                ))}
+
+                  <Modal
                       open={open}
                       onClose={handleClose}
                       aria-labelledby="modal-modal-title"
@@ -219,15 +228,13 @@ const TestResults = () => {
                     >
                       <Box sx={style}>
                         <Typography id="modal-modal-title" variant="h6" component="h2">
-                          {item.name}
+                          {modalName}
                         </Typography>
                         <Typography id="modal-modal-description" sx={{ mt: 2 }} style={{ wordWrap: "break-word" }}>
-                          {item.feedback}
+                          {modalFeedback}
                         </Typography>
                       </Box>
                     </Modal>
-                  </Grid>
-                ))}
               </Grid>
           </CardContent>
         </Item>
