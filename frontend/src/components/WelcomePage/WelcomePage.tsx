@@ -10,6 +10,7 @@ import { useSession } from '@supabase/auth-helpers-react';
 import DateTimePicker from 'react-datetime-picker';
 import dayjs from 'dayjs';
 import { styled, TextField, Button } from "@mui/material";
+import axios from 'axios';
 
 
 const StyledBox = styled(Box)({
@@ -72,6 +73,25 @@ interface gapiType {
   id: string,
 }
 
+type UserData = {
+  id: number,
+  email: string,
+  first_name: string,
+  last_name:string,
+  Role:string,
+  mob_id:number,
+  course_id:number,
+};
+
+type PreviousTestsData = {
+  id: number,
+  name: string,
+  user_id: number,
+  test_id: number,
+  feedback: string,
+  result: string
+}
+
 function WelcomePage() {
   const [testClicked, setTestClicked] = useState(false);
   const [WDClicked, setWDClicked] = useState(false);
@@ -87,6 +107,9 @@ function WelcomePage() {
   const [weeksEvents, setWeeksEvents] = useState<gapiType[]>();
   const [dayEvents, setDayEvents] = useState<gapiType[]>();
   const [reFetchCalendar, setReFetchCalendar] = useState(false);
+
+  const [user, setUser] = useState('');
+  const [feedback, setFeedback] = useState([]);
 
   const session = useSession();
   const profilePicture = session?.user.user_metadata.picture;
@@ -139,6 +162,19 @@ function WelcomePage() {
     });
     setReFetchCalendar(!reFetchCalendar);
   }
+
+  useEffect(() => {
+    const getUserData = async () => {
+      axios.get('http://localhost:8080/api/users')
+        .then((data) => {
+          const user = data.data.filter((user: UserData) => {
+            return user.email === localStorage.getItem('email');
+          });
+          setUser(user[0].id);
+        })
+    }
+    getUserData();
+  }, []);
 
   useEffect(() => {
     async function getCalendarEventWeek() {
@@ -211,6 +247,17 @@ function WelcomePage() {
     getCalendarEventDay()
   }, [session?.provider_token, reFetchCalendar]);
 
+  useEffect(() => {
+    const getPreviousTests = async () => {
+      if (user !== '') {
+        const response = await fetch(`http://localhost:8080/api/previoustests/${user}`)
+        const data = await response.json();
+        setFeedback(data);
+      }
+    };
+    getPreviousTests();
+  }, [user]);
+
   return (
   <>
     <PrimarySearchAppBar />
@@ -222,7 +269,15 @@ function WelcomePage() {
         <Grid xs={12} sm={12} md={8} lg={5}>
           <Item onClick={() => setTestClicked(!testClicked)} className={`testresult ${testClicked ? 'item-clicked' : ''}`}>
           <h2 className='testresult-title'>Weekend Test Results</h2>
-          <table className='testresult-table'>
+          <Grid container spacing={2}>
+
+            {feedback.map((item: PreviousTestsData, index) => (
+              <Grid xs={4}>
+                <div className={'testresult2 ' + item.result + 'Result'}>Week {index+1}</div>
+              </Grid>
+              ))}
+          </Grid>
+          {/* <table className='testresult-table'>
             <tbody>
               <tr className='testresult-table-row'>
                 <td className='testresult-table-row-el testresult-table-row-el-green'>Week 1</td>
@@ -240,7 +295,7 @@ function WelcomePage() {
                 <td className='testresult-table-row-el testresult-table-row-el-undefined'>Week 9</td>
               </tr>
             </tbody>
-          </table>
+          </table> */}
           </Item>
         </Grid>
         <Grid xs={12} sm={4} md={4} lg={2}>

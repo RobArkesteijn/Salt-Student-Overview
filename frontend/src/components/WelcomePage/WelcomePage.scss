@@ -209,3 +209,17 @@ body {
     width: 250px;
   }
 }
+
+.testresult2 {
+  padding: 10px;
+  border-radius: 2px;
+  box-shadow: 0px 2px 1px 0px rgba(0,0,0,0.6), 0px 1px 1px 0px rgba(0,0,0,0.54), 0px 1px 3px 0px rgba(0,0,0,0.52);
+}
+
+.greenResult {
+  background-color: rgb(136, 255, 97);
+}
+
+.redResult {
+  background-color: rgb(255, 97, 97);
+}
