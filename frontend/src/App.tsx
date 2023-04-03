@@ -5,6 +5,7 @@ import WelcomePage from './components/WelcomePage/WelcomePage';
 import Login from './components/Login/Login';
 import ProfileSetting from './components/ProfileSetting/ProfileSetting';
 import TestResults from './components/TestResults/TestResults';
+import InstructorPage from './components/InstructorPage/InstructorPage';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/profile" element={<ProfileSetting />} />
         <Route path="/results" element={<TestResults />} />
+        <Route path="/instructor" element={<InstructorPage />} />
       </Routes>
     </>
   );
