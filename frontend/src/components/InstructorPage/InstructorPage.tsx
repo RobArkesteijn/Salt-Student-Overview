@@ -1,4 +1,4 @@
-import { Paper, Table, TableCell, TableContainer, TableHead, TableRow, Button, TableBody, TableSortLabel, FormControl, Select, MenuItem, InputLabel, TextField, SelectChangeEvent, Grid, styled } from "@mui/material";
+import { Paper, Table, TableCell, TableContainer, TableHead, TableRow, Button, TableBody, TableSortLabel, FormControl, Select, MenuItem, InputLabel, TextField, SelectChangeEvent, Grid, styled, Modal, Box, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import PrimarySearchAppBar from "../NavBar/NavBar";
 import './InstructorPage.scss';
@@ -22,6 +22,25 @@ const InstructorPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [courseFilter, setCourseFilter] = useState('');
   const [userDetails, setUserDetails] = useState([]);
+  const [open, setOpen] = React.useState(false);
+  const handleClose = () => setOpen(false);
+  const [modalFirstName, setModalFirstName] = useState('');
+  const handleOpen = (first_name: string) => {
+    setOpen(true);
+    setModalFirstName(first_name);
+  }
+
+  const style = {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 500,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+  };
 
   useEffect(() => {
     const getAllUserDetails = async () => {
@@ -66,9 +85,9 @@ const InstructorPage = () => {
   //   "& .MuiFilledInput-underline:after": {
   //     borderBottomColor: 'rgb(255, 121, 97)'
   //   },
-  //   "& label.Mui-focused": {
-  //     color: 'rgb(255, 121, 97)'
-  //   },
+  //   // "& label.Mui-focused": {
+  //   //   color: 'rgb(255, 121, 97)'
+  //   // },
   // })
 
   const SaltSelect = styled(FormControl) ({
@@ -151,12 +170,31 @@ const InstructorPage = () => {
             </TableHead>
             <TableBody>
               {sortedRows.map((row: UserDetails) => (
-                <TableRow key={row.first_name}>
-                  <TableCell>{row.first_name}</TableCell>
-                  <TableCell>{row.mob_name}</TableCell>
-                  <TableCell>{row.name}</TableCell>
-                  <TableCell style={{width: '140px'}}><Button variant='contained' style={{backgroundColor: 'rgb(255, 121, 97)'}}>Edit {row.id}</Button></TableCell>
-                </TableRow>
+                <>
+                  <TableRow key={row.first_name}>
+                    <TableCell>{row.first_name}</TableCell>
+                    <TableCell>{row.mob_name}</TableCell>
+                    <TableCell>{row.name}</TableCell>
+                    <TableCell style={{width: '140px'}}><Button variant='contained' onClick={() => handleOpen(row.first_name)} style={{backgroundColor: 'rgb(255, 121, 97)'}}>Edit</Button></TableCell>
+                  </TableRow>
+
+                  <Modal
+                  open={open}
+                  onClose={handleClose}
+                  aria-labelledby="modal-modal-title"
+                  aria-describedby="modal-modal-description"
+                  >
+                    <Box sx={style}>
+                      <Typography id="modal-modal-title" variant="h6" component="h2">
+                        {modalFirstName}
+                      </Typography>
+                      <TextField></TextField>
+                      {/* <Typography id="modal-modal-description" sx={{ mt: 2 }} style={{ wordWrap: "break-word" }}>
+                        {row.mob_name}
+                      </Typography> */}
+                    </Box>
+                  </Modal>
+                </>
               ))}
             </TableBody>
           </Table>
