@@ -18,6 +18,9 @@ type Result = {
   Role:string,
   mob_id:number,
   course_id:number,
+  bio:string,
+  linkedin:string,
+  github:string
 };
 
 type WeekendTest = {
@@ -75,8 +78,11 @@ const getAllUsers = async () => {
       first_name: row.first_name as string,
       last_name: row.last_name as string,
       Role: row.Role as string,
-      mob_id:row.mob_id as number,
-      course_id:row.course_id as number,
+      mob_id: row.mob_id as number,
+      course_id: row.course_id as number,
+      bio: row.bio as string,
+      linkedin: row.linkedin as string,
+      github: row.github as string,
     };
     return userRow;
   });
@@ -154,7 +160,7 @@ const findCoursesById = async (courseId:string) => {
       Role: row.Role as string,
       mob_id: row.mob_id as number,
       course_id: row.course_id as number,
-      name: row.name as string  
+      name: row.name as string,
     };
     return courseUserRows;
   });
@@ -181,6 +187,39 @@ const findUsersByMobId = async (mobId:string) => {
     return mobRows;
   });
 };
+
+const UpdateUsersByUserId = async (
+  UserId:string,
+  userBio:string,
+  userLinkedin:string,
+  userGithub:string,
+) => {
+  const client = await pool.connect();
+  const result = await client.query('UPDATE "SaltDB"."Users" SET "bio" = $2, "linkedin" = $3, "github" = $4 WHERE id=$1', [UserId, userBio, userLinkedin, userGithub]);
+  console.log('result:', result);
+  if (result.rowCount !== 1) {
+    client.release();
+    return null;
+  }
+  return true;
+
+  // const firstRow = result.rows[0];
+  // client.release();
+  // const userRows : Result = {
+  //   id: firstRow.id as number,
+  //   email: firstRow.email as string,
+  //   first_name: firstRow.first_name as string,
+  //   last_name: firstRow.last_name as string,
+  //   Role: firstRow.Role as string,
+  //   mob_id: firstRow.mob_id as number,
+  //   bio: firstRow.bio as string,
+  //   course_id: firstRow.bio as number,
+  //   github: firstRow.github as string,
+  //   linkedin: firstRow.linkedin as string,
+  // };
+  // return userRows;
+};
+
 // pool.query('SELECT * FROM "SaltDB"."Users" FULL OUTER
 // JOIN "SaltDB"."Mob" ON "SaltDB"."Mob"."id" = "SaltDB"."Users"."mob_id"', (err, res) => {
 //   if (err) {
@@ -197,4 +236,5 @@ export default {
   getAllCourses,
   findUsersByMobId,
   findCoursesById,
+  UpdateUsersByUserId,
 };

@@ -29,6 +29,20 @@ const findCoursesById = async (courseId:string) => {
   const courseUsers = await db.findCoursesById(courseId);
   return courseUsers;
 };
+const UpdateUsersByUserId = async (
+  UserId:string,
+  userBio:string,
+  userLinkedin:string,
+  userGithub:string,
+) => {
+  const infoUsers = await db.UpdateUsersByUserId(
+    UserId,
+    userBio,
+    userLinkedin,
+    userGithub,
+  );
+  return infoUsers;
+};
 
 const index = () => console.log('test');
 
@@ -39,5 +53,6 @@ export default {
   getAllStudents,
   getAllCourses,
   findUsersByMobId,
-  findCoursesById
+  findCoursesById,
+  UpdateUsersByUserId,
 };

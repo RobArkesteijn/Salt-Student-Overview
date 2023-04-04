@@ -61,7 +61,7 @@ const theme = createTheme({
             <Link href="https://www.instagram.com/school_of_applied_technology/" target="_blank" >
             <Instagram fontSize="large" style={{margin:"10px"}}sx={{ color: grey[100] }}/>
             </Link>
-            <Link href="hhttps://se.linkedin.com/company/applied-technology-stockholm" target="_blank" >
+            <Link href="https://se.linkedin.com/company/applied-technology-stockholm" target="_blank" >
             <LinkedIn fontSize="large" style={{margin:"10px"}} sx={{ color: grey[100] }}/>            </Link>            
           </Grid>
           <Grid item xs={12}>
