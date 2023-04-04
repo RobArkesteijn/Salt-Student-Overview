@@ -15,25 +15,89 @@ type UserDetails = {
   name: string
 }
 
+type TestData = {
+  id: number,
+  name: string,
+  repo_name: string,
+  repo_url: string,
+  course_ids: string[],
+  ongoing: boolean
+}
+
+type UserFeedback = {
+  id: number,
+  name: string,
+  user_id: number,
+  test_id: number,
+  feedback: string,
+  result: string
+}
+
 type Order = 'asc' | 'desc';
 
 const InstructorPage = () => {
   const [order, setOrder] = useState<Order>('asc');
   const [orderBy, setOrderBy] = useState<keyof UserDetails>('first_name');
   const [searchTerm, setSearchTerm] = useState('');
-  const [courseFilter, setCourseFilter] = useState('jsfs');
   const [userDetails, setUserDetails] = useState([]);
   const [open, setOpen] = React.useState(false);
   const handleClose = () => setOpen(false);
   const [modalFirstName, setModalFirstName] = useState('');
   const [modalLastName, setModalLastName] = useState('');
   const [modalMobName, setModalMobName] = useState('');
+  const [courseFilter, setCourseFilter] = useState('');
+  const [courseTest, setCourseTest] = useState('');
+  const [testSelect, setTestSelect] = useState([])
+  const [chosenSelect, setChosenSelect] = useState('');
+  const [userFeedback, setUserFeedback] = useState([]);
+
   const handleOpen = (first_name: string, last_name: string, mob_name: string) => {
     setOpen(true);
     setModalFirstName(first_name);
     setModalLastName(last_name);
     setModalMobName(mob_name);
   }
+
+  useEffect(() => {
+    const getAllUserDetails = async () => {
+      const response = await fetch(`http://localhost:8080/api/alluserdetails`)
+      const data = await response.json();
+      setUserDetails(data);
+    };
+    getAllUserDetails();
+  }, []);
+
+  useEffect(() => {
+    const getUserByEmail = async () => {
+      const response = await fetch(`http://localhost:8080/api/getuserbyemail/${'ariano.wongsosetro@appliedtechnology.se'}`);
+      const data = await response.json();
+      const courseName = data[0].name;
+      const courseId = data[0].id;
+      const courseIdString = String(courseId);
+      setCourseFilter(courseName.toLowerCase());
+      setCourseTest(courseIdString);
+    };
+    getUserByEmail();
+  }, [])
+
+  useEffect(() => {
+    const getTestByCourseId = async () => {
+      const response = await fetch(`http://localhost:8080/api/weekendtestcourse/${courseTest}`)
+      const data = await response.json();
+      setTestSelect(data);
+    };
+    getTestByCourseId();
+  }, [courseTest]);
+
+  useEffect(() => {
+    const getUserFeedback = async () => {
+      const response = await fetch(`http://localhost:8080/api/previoustests/100`)
+      const data = await response.json();
+      setUserFeedback(data);
+      console.log(data);
+    };
+    getUserFeedback();
+  }, []);
 
   const style = {
     position: 'absolute' as 'absolute',
@@ -44,15 +108,6 @@ const InstructorPage = () => {
     padding: '20px 50px 20px 50px',
     width: '1000px'
   };
-
-  useEffect(() => {
-    const getAllUserDetails = async () => {
-        const response = await fetch(`http://localhost:8080/api/alluserdetails`)
-        const data = await response.json();
-        setUserDetails(data);
-    };
-    getAllUserDetails();
-  }, []);
 
   const handleSort = (property: keyof UserDetails) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -66,6 +121,14 @@ const InstructorPage = () => {
 
   const handleFilter = (event: SelectChangeEvent<string>) => {
     setCourseFilter(event.target.value);
+  };
+
+  const handleCourseTest = (event: SelectChangeEvent<string>) => {
+    setCourseTest(event.target.value);
+  };
+
+  const handleTest = (event: SelectChangeEvent<string>) => {
+    setChosenSelect(event.target.value);
   };
 
   const filteredRows = userDetails.filter((item: UserDetails) =>
@@ -210,36 +273,31 @@ const InstructorPage = () => {
                           <Grid container spacing={2}>
                             <Grid xs={4} style={{paddingRight: '10px'}}>
                               <SaltSelect variant="filled" style={{ width: '100%'}}>
-                                <InputLabel id="course-filter-label">Course</InputLabel>
+                                <InputLabel>Course</InputLabel>
                                 <Select
-                                  labelId="course-filter-label"
-                                  id="course-filter"
-                                  value={courseFilter}
-                                  onChange={handleFilter}
-                                  label="Weekend Test"
+                                  value={courseTest}
+                                  onChange={handleCourseTest}
+                                  label="Course"
                                 >
                                   <MenuItem value="">All</MenuItem>
-                                  <MenuItem value="jsfs">JSFS</MenuItem>
-                                  <MenuItem value="jfs">JFS</MenuItem>
-                                  <MenuItem value="dnfs">DNFS</MenuItem>
+                                  <MenuItem value="500">JSFS</MenuItem>
+                                  <MenuItem value="501">JFS</MenuItem>
+                                  <MenuItem value="502">DNFS</MenuItem>
                                 </Select>
                               </SaltSelect>
                             </Grid>
 
                             <Grid xs={8}>
                               <SaltSelect variant="filled" style={{ width: '100%'}}>
-                                <InputLabel id="course-filter-label">Weekend test</InputLabel>
+                                <InputLabel>Weekend test</InputLabel>
                                 <Select
-                                  labelId="course-filter-label"
-                                  id="course-filter"
-                                  value={courseFilter}
-                                  onChange={handleFilter}
+                                  value={chosenSelect}
+                                  onChange={handleTest}
                                   label="Weekend Test"
                                 >
-                                  <MenuItem value="winter23-jsfs-simpleFunctions">Simple Functions / winter23-jsfs-simpleFunctions</MenuItem>
-                                  <MenuItem value="jsfs">JSFS</MenuItem>
-                                  <MenuItem value="jfs">JFS</MenuItem>
-                                  <MenuItem value="dnfs">DNFS</MenuItem>
+                                  {testSelect.map((item: TestData) => (
+                                    <MenuItem value={item.repo_name}>{item.name} / {item.repo_name}</MenuItem>
+                                  ))}
                                 </Select>
                               </SaltSelect>
                             </Grid>
@@ -248,15 +306,10 @@ const InstructorPage = () => {
                             <SaltSelect variant="filled" style={{ width: '100%'}}>
                                 <InputLabel id="course-filter-label">Result</InputLabel>
                                 <Select
-                                  labelId="course-filter-label"
-                                  id="course-filter"
-                                  value={courseFilter}
-                                  onChange={handleFilter}
-                                  label="Weekend Test"
+                                  label="Result"
                                 >
                                   <MenuItem value="green">Green</MenuItem>
                                   <MenuItem value="red">Red</MenuItem>
-                                  <MenuItem value="">Not specified</MenuItem>
                                 </Select>
                               </SaltSelect>
                             </Grid>
@@ -283,14 +336,13 @@ const InstructorPage = () => {
                           </Typography>
 
                           <Typography>
-                            No feedback yet
+                            {/* No feedback yet */}
+                            {userFeedback.map((item: UserFeedback) => (
+                              <Button>{item.name}</Button>
+                            ))}
                           </Typography>
                         </Grid>
                       </Grid>
-                      
-                      {/* <Typography id="modal-modal-description" sx={{ mt: 2 }} style={{ wordWrap: "break-word" }}>
-                        {row.mob_name}
-                      </Typography> */}
                     </Box>
                   </Modal>
                 </>
