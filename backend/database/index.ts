@@ -45,6 +45,11 @@ const getAllUserDetails = async () => {
   return users;
 };
 
+const getUserDetailsByEmail = async (email: string) => {
+  const users = await db.getUserDetailsByEmail(email);
+  return users;
+};
+
 const index = () => console.log('test');
 
 export default {
@@ -57,5 +62,6 @@ export default {
   findCoursesById,
   findTestByCourseId,
   findPreviousTestsById,
-  getAllUserDetails
+  getAllUserDetails,
+  getUserDetailsByEmail
 };

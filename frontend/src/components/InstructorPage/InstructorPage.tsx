@@ -1,4 +1,5 @@
-import { Paper, Table, TableCell, TableContainer, TableHead, TableRow, Button, TableBody, TableSortLabel, FormControl, Select, MenuItem, InputLabel, TextField, SelectChangeEvent, Grid, styled, Modal, Box, Typography } from "@mui/material";
+import { Paper, Table, TableCell, TableContainer, TableHead, TableRow, Button, TableBody, TableSortLabel, FormControl, Select, MenuItem, InputLabel, TextField, SelectChangeEvent, Grid, styled, Modal, Box, Typography, IconButton } from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
 import React, { useEffect, useState } from "react";
 import PrimarySearchAppBar from "../NavBar/NavBar";
 import './InstructorPage.scss';
@@ -20,14 +21,18 @@ const InstructorPage = () => {
   const [order, setOrder] = useState<Order>('asc');
   const [orderBy, setOrderBy] = useState<keyof UserDetails>('first_name');
   const [searchTerm, setSearchTerm] = useState('');
-  const [courseFilter, setCourseFilter] = useState('');
+  const [courseFilter, setCourseFilter] = useState('jsfs');
   const [userDetails, setUserDetails] = useState([]);
   const [open, setOpen] = React.useState(false);
   const handleClose = () => setOpen(false);
   const [modalFirstName, setModalFirstName] = useState('');
-  const handleOpen = (first_name: string) => {
+  const [modalLastName, setModalLastName] = useState('');
+  const [modalMobName, setModalMobName] = useState('');
+  const handleOpen = (first_name: string, last_name: string, mob_name: string) => {
     setOpen(true);
     setModalFirstName(first_name);
+    setModalLastName(last_name);
+    setModalMobName(mob_name);
   }
 
   const style = {
@@ -35,11 +40,9 @@ const InstructorPage = () => {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 500,
     bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
+    padding: '20px 50px 20px 50px',
+    width: '1000px'
   };
 
   useEffect(() => {
@@ -66,7 +69,9 @@ const InstructorPage = () => {
   };
 
   const filteredRows = userDetails.filter((item: UserDetails) =>
-    (item.first_name.toLowerCase().includes(searchTerm.toLowerCase()) || item.mob_name.toLowerCase().includes(searchTerm.toLowerCase())) &&
+    (item.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    item.last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    item.mob_name.toLowerCase().includes(searchTerm.toLowerCase())) &&
     (courseFilter === '' || item.name.toLowerCase() === courseFilter)
   );
   
@@ -81,6 +86,7 @@ const InstructorPage = () => {
     }
   });
 
+  // This doesn't work for some reason
   // const SaltInput = styled(TextField) ({
   //   "& .MuiFilledInput-underline:after": {
   //     borderBottomColor: 'rgb(255, 121, 97)'
@@ -172,23 +178,116 @@ const InstructorPage = () => {
               {sortedRows.map((row: UserDetails) => (
                 <>
                   <TableRow key={row.first_name}>
-                    <TableCell>{row.first_name}</TableCell>
+                    <TableCell>{row.first_name} {row.last_name}</TableCell>
                     <TableCell>{row.mob_name}</TableCell>
                     <TableCell>{row.name}</TableCell>
-                    <TableCell style={{width: '140px'}}><Button variant='contained' onClick={() => handleOpen(row.first_name)} style={{backgroundColor: 'rgb(255, 121, 97)'}}>Edit</Button></TableCell>
+                    <TableCell style={{width: '200px'}}><Button variant='contained' onClick={() => handleOpen(row.first_name, row.last_name, row.mob_name)} style={{backgroundColor: 'rgb(255, 121, 97)'}}>Add Feedback</Button></TableCell>
                   </TableRow>
 
                   <Modal
-                  open={open}
-                  onClose={handleClose}
-                  aria-labelledby="modal-modal-title"
-                  aria-describedby="modal-modal-description"
+                    open={open}
+                    // onClose={handleClose}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
                   >
                     <Box sx={style}>
-                      <Typography id="modal-modal-title" variant="h6" component="h2">
-                        {modalFirstName}
+                      <Typography id="modal-modal-title" variant="h5" component="h2" style={{textAlign: 'center'}}>
+                        {modalFirstName} {modalLastName} | {modalMobName}
                       </Typography>
-                      <TextField></TextField>
+                      <IconButton style={{position: 'absolute', left: '960px', bottom: '435px'}} onClick={handleClose}>
+                        <CloseIcon/>
+                      </IconButton>
+                      <br />
+                      <hr />
+                      <br />
+                      <br />
+                      <Grid container spacing={2}>
+                        <Grid xs={6} style={{paddingRight: '20px'}}>
+                          <Typography id="modal-modal-title" variant="h6" component="h2" style={{position: 'relative', left: '-14px'}}>
+                            Add Feedback
+                          </Typography>
+                          <br />
+                          <Grid container spacing={2}>
+                            <Grid xs={4} style={{paddingRight: '10px'}}>
+                              <SaltSelect variant="filled" style={{ width: '100%'}}>
+                                <InputLabel id="course-filter-label">Course</InputLabel>
+                                <Select
+                                  labelId="course-filter-label"
+                                  id="course-filter"
+                                  value={courseFilter}
+                                  onChange={handleFilter}
+                                  label="Weekend Test"
+                                >
+                                  <MenuItem value="">All</MenuItem>
+                                  <MenuItem value="jsfs">JSFS</MenuItem>
+                                  <MenuItem value="jfs">JFS</MenuItem>
+                                  <MenuItem value="dnfs">DNFS</MenuItem>
+                                </Select>
+                              </SaltSelect>
+                            </Grid>
+
+                            <Grid xs={8}>
+                              <SaltSelect variant="filled" style={{ width: '100%'}}>
+                                <InputLabel id="course-filter-label">Weekend test</InputLabel>
+                                <Select
+                                  labelId="course-filter-label"
+                                  id="course-filter"
+                                  value={courseFilter}
+                                  onChange={handleFilter}
+                                  label="Weekend Test"
+                                >
+                                  <MenuItem value="winter23-jsfs-simpleFunctions">Simple Functions / winter23-jsfs-simpleFunctions</MenuItem>
+                                  <MenuItem value="jsfs">JSFS</MenuItem>
+                                  <MenuItem value="jfs">JFS</MenuItem>
+                                  <MenuItem value="dnfs">DNFS</MenuItem>
+                                </Select>
+                              </SaltSelect>
+                            </Grid>
+
+                            <Grid xs={12} style={{paddingTop: '10px'}}>
+                            <SaltSelect variant="filled" style={{ width: '100%'}}>
+                                <InputLabel id="course-filter-label">Result</InputLabel>
+                                <Select
+                                  labelId="course-filter-label"
+                                  id="course-filter"
+                                  value={courseFilter}
+                                  onChange={handleFilter}
+                                  label="Weekend Test"
+                                >
+                                  <MenuItem value="green">Green</MenuItem>
+                                  <MenuItem value="red">Red</MenuItem>
+                                  <MenuItem value="">Not specified</MenuItem>
+                                </Select>
+                              </SaltSelect>
+                            </Grid>
+
+                            <Grid xs={12} style={{paddingTop: '10px'}}>
+                              <TextField
+                                variant="filled"
+                                label="Feedback"
+                                rows={4}
+                                multiline
+                                style={{ width: '100%'}}
+                              />
+                            </Grid>
+
+                            <Grid xs={4} style={{paddingTop: '10px'}}>
+                              <Button variant='contained' onClick={() => handleOpen(row.first_name, row.last_name, row.mob_name)} style={{backgroundColor: 'rgb(255, 121, 97)'}}>Add</Button>
+                            </Grid>
+                          </Grid>
+                        </Grid>
+
+                        <Grid xs={6}>
+                          <Typography id="modal-modal-title" variant="h6" component="h2">
+                            Latest Feedback
+                          </Typography>
+
+                          <Typography>
+                            No feedback yet
+                          </Typography>
+                        </Grid>
+                      </Grid>
+                      
                       {/* <Typography id="modal-modal-description" sx={{ mt: 2 }} style={{ wordWrap: "break-word" }}>
                         {row.mob_name}
                       </Typography> */}

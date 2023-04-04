@@ -92,4 +92,18 @@ app.get('/api/alluserdetails', async (req, res) => {
   res.json(users);
 });
 
+app.get('/api/getuserbyemail/:email', async (req, res) => {
+  const { email } = req.params;
+  try {
+    const test = await db.getUserDetailsByEmail(email);
+    if (!test) {
+      res.status(404).json({ message: 'not found' });
+    } else {
+      res.json(test);
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'An error occurred while fetching data' });
+  }
+});
+
 app.listen(port, () => console.log(`Running on http://localhost:${port}`));
