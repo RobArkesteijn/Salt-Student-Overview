@@ -21,6 +21,7 @@ import TaskIcon from '@mui/icons-material/Task';
 import { Link } from 'react-router-dom';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { textAlign } from '@mui/system';
 
 const drawerWidth = 240;
 
@@ -110,20 +111,24 @@ export default function PersistentDrawerLeft() {
           '& .MuiDrawer-paper': {
             width: drawerWidth,
             boxSizing: 'border-box',
+            backgroundColor:'#ff7961'
           },
         }}
         variant="persistent"
         anchor="left"
         open={open}
       >
-        <DrawerHeader>
-          <IconButton onClick={handleDrawerClose}>
+        <DrawerHeader style={{display: 'flex', justifyContent:'space-between'}}>
+          <Typography style={{color: 'white', paddingLeft:'15px'}}>
+            MENU
+          </Typography>
+          <IconButton onClick={handleDrawerClose} style={{color: 'white'}}>
             {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-          </IconButton>
+          </IconButton >
         </DrawerHeader>
         <Divider />
         <List>
-        <Link to='/profile' style={{color: 'black'}}>
+        <Link to='/profile' style={{color: 'white'}}>
             <ListItem key={'My Profile'} disablePadding>
                 <ListItemButton>
                   <ListItemIcon>
@@ -133,31 +138,35 @@ export default function PersistentDrawerLeft() {
                 </ListItemButton>
             </ListItem>
           </Link>
-          <Link to='/' style={{color: 'black'}}>
+          
+
+          <Link to='/' style={{color: 'white'}}>
+
             <ListItem key={'Dashboard'} disablePadding>
                 <ListItemButton>
                   <ListItemIcon>
-                    <HomeIcon/>
+                    <HomeIcon style={{color: 'white'}}/>
                   </ListItemIcon>
                   <ListItemText primary={'Dashboard'} />
                 </ListItemButton>
             </ListItem>
           </Link>
-          <Link to='/results' style={{color: 'black'}}>
+          <Link to='/results' style={{color: 'white'}}>
             <ListItem key={'Results'} disablePadding>
                 <ListItemButton>
                   <ListItemIcon>
-                    <TaskIcon/>
+                    <TaskIcon style={{color: 'white'}} />
                   </ListItemIcon>
                   <ListItemText primary={'Results'} />
                 </ListItemButton>
             </ListItem>
           </Link>
+
         </List>
       </Drawer>
-      <br />
-      <br />
-      <br />
+      <br/>
+      <br/>
+      <br/>
     </Box>
   );
 }
