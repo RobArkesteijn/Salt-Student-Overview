@@ -21,7 +21,7 @@ const theme = createTheme({
         '&:hover': {
             backgroundColor: '#ff7961',
             color: 'black',
-            boxShadow:'3px 3px 7px 2px white'
+            boxShadow:'0px 0px 7px 2px white'
         }
     },
     "&.MuiButton-text": {
@@ -50,7 +50,7 @@ const theme = createTheme({
           </Grid>
           <Grid item xs={12}>
           <StyledButton variant="outlined" color="inherit" size="medium" startIcon={<Mail  sx={{ color: grey[100]}}/>} style={{margin:"5px",marginTop:"10px",}}>
-          <a href = "mailto: amsterdam@salt.study" >Contact Us</a>
+          <a href="mailto: amsterdam@salt.study" >Contact Us</a>
         </StyledButton>
             
           </Grid>
@@ -65,7 +65,7 @@ const theme = createTheme({
             <LinkedIn fontSize="large" style={{margin:"10px"}} sx={{ color: grey[100] }}/>            </Link>            
           </Grid>
           <Grid item xs={12}>
-            <Typography color="textSecondary" variant="subtitle1">
+            <Typography color="white" variant="subtitle1">
               ©&lt;/salt&gt;
             </Typography>
           </Grid>

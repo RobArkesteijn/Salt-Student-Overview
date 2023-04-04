@@ -1,0 +1,30 @@
+.form {
+    font-family: 'Futura PT', sans-serif;
+    flex-direction: column;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    input[type="file"]::file-selector-button {
+        background-color: white;
+        color: rgb(138, 64, 51);
+        padding: 10px 20px;
+        border-radius: 5px;
+        border: solid 1px rgb(138, 64, 51);
+        cursor: pointer;
+    }
+    input#file-input.form-input {
+        background-color: rgb(255, 121, 97);
+        color: white;
+        margin: 10px 0;
+        border: solid 1px rgb(138, 64, 51);
+        border-radius: 7px;
+    }
+    .form-button {
+        background-color: rgb(255, 121, 97);
+        color: white;
+        border: solid 1px black;
+        border-radius: 3px;
+        padding: 4px 0;
+    }
+}
+
