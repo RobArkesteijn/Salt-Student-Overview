@@ -1,102 +1,102 @@
+@import url('https://fonts.cdnfonts.com/css/futura-pt');
+@import "toastr";
 $main-color:rgb(255, 121, 97);
 *{
     box-sizing: border-box;
     margin:0 ;
     padding: 0;
 }
-
 .main-profile-div{
-    height: 100vh;
-    width: 99.9%;
-    background-color: white;
-    border-radius: 5px;
-    box-shadow: 5px 5px 18px #888888;
-    overflow-x: hidden;
-    margin-top: 10px;
-    .profile-container{
-        width: 100%;
-        height: 100%;
-        background: white;
-        margin: auto ;
-        overflow: scroll;
-        .top-part{
-            height: 50%;
-            width: 100%;
-            position: relative;
-            .user-profile-bg-image{
-                height: 60%;
-                width: 100%;
-                background-color: $main-color;
-                overflow: hidden;
-                #prf-bg-img{
-                     height: 73vh;
-                     width: 100%;
-                     margin-top: -12rem;
-                }
-            }
+    display: flex;
+    flex-direction: row;
+    padding-left: 50px;
+    padding-top: 20px;
 
-            .user-profile-image {
-                 position: absolute;
-                 width: 8%;
-                 height: 20%;
-                 border-radius: 50%;
-                 transform: translateX(50%);
-                 right: 90%;
-                 background-color: rgb(188, 188, 188);
-                 background-image:  url("../../../public/Image/cloud.png");
-                 background-position: 2px 10px 10px 10px;
-                 bottom: 8rem ;
-                 background-position: 15px;
-                 background-size: contain;
-                 background-repeat: no-repeat;
-                 #prf-img{
-                    height: 100%;
-                    width: 100%;
-                    object-fit: cover;
-                    border-radius: 50%;
-               }
-                  
+}
+.Profile-dis-Part{
+    background-color: #f8f8f8;
+    padding:10px;
+    text-align:center;
+    
+    transition: 0.2s ease-in-out;
+    border: solid 1px transparent;
+    box-shadow: 0px 2px 1px -1px rgba(255,121,97), 0px 1px 1px 0px rgba(255,121,97), 0px 1px 3px 0px rgba(255,121,97);
 
-            }
+       height: 60vh;
+       width: 80%;
+       padding: 4px 2px;
+       margin: 5px 0;
+       color: white;
+       margin-right: 50px !important;
+                       border-radius: 2px;
+       border-radius: 2px;
+       .labelField{
+        text-align: left;
+        padding: 2px 40px;
+       }
+       .TextField{
+        width: 70%;
+        padding: 10px 0;
+       
+       }
+}
 
-        } 
-
-    }
-    .CardContent{
-        margin: 0;
-        padding-right: 38px;
-        display: flex;
-        justify-content: space-between;
+    .Profile-image-Part{
+        margin-bottom: 20px;
+     background-color: #f8f8f8;
+     padding:10px;
+     text-align:center;
+     
+     transition: 0.2s ease-in-out;
+     border: solid 1px transparent;
+     box-shadow: 0px 2px 1px -1px rgba(255,121,97), 0px 1px 1px 0px rgba(255,121,97), 0px 1px 3px 0px rgba(255,121,97);
+    
+        height: 60vh;
+        width: 30%;
+        padding: 4px 2px;
+        margin-bottom: 20px;
+        color: white;
+        margin-right: 50px !important;
+        border-radius: 2px;
+        border-radius: 2px;
+       
         
-        .TextField{
-            padding: 10px;
-            margin: 10px;
-           width: 100%;
+       
+        .image-container{
+            display: flex;
+            justify-content: space-around;
+            padding: 28px 0;
+            border-bottom: 1px #c6c3c3 solid;
+            .image{
+                border-radius: 50%;
+            }
         }
-        
-    }
-    .button-container{
-        display: flex;
-      
-        
-    }
-   
-}
+        .info-container{
+            color: black;
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+            padding-top: 10px;
+         
+            .button{
+                display: flex;
+                justify-content: flex-end;
+                padding-top: 33px;
+                padding-right: 15px; 
+                      
+            }
+            .TextField{
+                padding: 15px 10px;
+            }
 
-.file-upload {
-    opacity: 0;
-    position: relative;
-    z-index: 1;
-    background-color: red;
-    width: 100%;
-    height: 100%;
-    bottom: 0rem;
-    border-radius: 50%;
-    transform: translateX(50%);
-    right: 50%;
-    position: absolute;
-}
+           
+        }
+    
+    }
+    .test{
+        padding: 20px 0;
+    } 
 
-.firstColoumn {
-    width: 40%;
-}
+    @media only screen and (max-width: 600px) {
+       
+      }

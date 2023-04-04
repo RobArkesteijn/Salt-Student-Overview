@@ -1,13 +1,10 @@
 import React, {useState, useEffect} from "react";
 import "./ProfileSetting.scss";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import Button from "@mui/material/Button";
+import toastr from 'toastr';
 import Footer from "../Footer/Footer";
 import Navbar from "../NavBar/NavBar";
 import axios from "axios";
-import { Typography } from "@mui/material";
+import { Box, Button, Grid, InputLabel, Modal, Paper, TextField, styled,   } from "@mui/material";
 
 type UserData = {
   id: number,
@@ -30,18 +27,20 @@ type MobUsers = {
 };
 
 const ProfileSetting = () => {
-  const [image, setImage] = useState(localStorage.getItem('picture'));
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file && file.type.substring(0, 5) === "image") {
-      const imageUrl = URL.createObjectURL(file);
-      setImage(imageUrl);
-    } else {
-      setImage("");
-    }
+  const style = {
+    position: 'absolute' as 'absolute',
+    top: '40%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid rgba(255,121,97)',
+    boxShadow: '0px 9px 46px 8px rgba(255,121,97)',
+    p: 4,
   };
 
   const [name, setName] = useState('');
+  const [id, setID] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [mobNumber, setMobNumber] = useState('');
@@ -49,24 +48,62 @@ const ProfileSetting = () => {
   const [momMembers, setMobMembers] = useState([]);
   const [courseNumber, setCourseNumber] = useState('');
   const [courseName, setCourseName] = useState('');
+  const[bio,setBio]=useState('');
+  const[linkedIn,setLinkedIn]=useState('');
+  const[gitHub,setGitHub]=useState('');
+  const [open, setOpen] = React.useState(false);
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  async function getUserData() {
+    axios.get('http://localhost:8080/api/users')
+      .then((data) => {
+        const user = data.data.filter((user: UserData) => {
+          return user.email === localStorage.getItem('email');
+        });
+        setName(user[0].first_name);
+        setLastName(user[0].last_name);
+        setEmail(user[0].email);
+        setMobNumber(user[0].mob_id);
+        setCourseNumber(user[0].course_id);
+        setID(user[0].id);
+        setBio(user[0].bio);
+        setLinkedIn(user[0].linkedin);
+        setGitHub(user[0].github);
+      })
+  }
 
   useEffect(() => {
-    async function getUserData() {
-      axios.get('http://localhost:8080/api/users')
-        .then((data) => {
-          const user = data.data.filter((user: UserData) => {
-            return user.email === localStorage.getItem('email');
-          });
-          setName(user[0].first_name);
-          setLastName(user[0].last_name);
-          setEmail(user[0].email);
-          setMobNumber(user[0].mob_id);
-          setCourseNumber(user[0].course_id);
-        })
-    }
+ 
     getUserData();
   }, []);
 
+  const handleSubmit = async (event:any) => {
+    event.preventDefault(); 
+
+  try {
+    const response = await axios.put(`http://localhost:8080/api/infousers/${id}`, {
+      bio: bio,
+      linkedIn: linkedIn,
+      gitHub: gitHub
+    });
+    setBio('');
+    setLinkedIn('');
+    setGitHub('');
+    getUserData();
+    toastr.success('User data updated successfully');
+
+
+  } catch (error:any) {
+    if (error.response && error.response.status === 404) {
+      console.log('User not found');
+    } else {
+      console.log('Failed to update user data');
+    }
+  }
+  };
+ 
   useEffect(() => {
     async function getMobData() {
       if (mobNumber !== '') {
@@ -96,94 +133,88 @@ const ProfileSetting = () => {
   }, [courseNumber])
 
   return (
-    <>
-      <Navbar />
-      <div className="main-profile-div">
-        <div className="profile-container">
-          <div className="top-part">
-            <div className="user-profile-bg-image">
-              <img id="prf-bg-img" src="Image/SALT.jpg" alt="salt" />
-            </div>
-            <div className="user-profile-image">
-              <img id="prf-img" src={image!} alt="" srcSet="" />
-              <input
-                type="file"
-                accept="/image/*"
-                onChange={handleFileChange}
-                className="file-upload"
-              />
-            </div>
+  <>
+    <Navbar />
+    <div className="main-profile-div" >
+     <Grid container spacing={1} style={{display:'flex',justifyContent:'space-evenly'}}>
+        <Grid  item sm={12} xs={12} md={4}   className='Profile-image-Part'>
+          <div className="image-container" >
+          <img alt="profile" src={localStorage.getItem('picture')!} className="image"/>
           </div>
-          <Card sx={{ }}>
-            <CardContent className="CardContent">
-              <div className="firstColoumn">
-                <Typography>name:</Typography>
-              <input
-                className="TextField"
-                required
-                id="outlined-required"
-                defaultValue={name}
-                
-              />
-              <Typography>Last name:</Typography>
-              <input
-                className="TextField"
-                required
-                id="outlined-required"
-                defaultValue={lastName}
-              />
-              <Typography>Email:</Typography>
-              <input
-                className="TextField"
-                id="outlined-email-input"
-                type="email"
-                defaultValue={email}
-                autoComplete="current-email"
-                
-              />
-              
-              <Typography>Course:</Typography>
-              <input
-                className="TextField"
-                disabled
-                id="outlined-disabled"
-                defaultValue={courseName}
-                color="warning"
-              />
-              </div>
-              <div className="firstColoumn">
-              <Typography>Mob name:</Typography>
-              <input
-                className="TextField"
-                disabled
-                id="outlined-disabled"
-                defaultValue={mobName}
-              />
-              <Typography>Instructors:</Typography>
-                            
-              <input
-                className="TextField"
-                disabled
-                id="outlined-disabled"
-                defaultValue="Wietse,Dasha"
-              />
-               <Typography>Mob Members:</Typography>
+          <Grid container xs={12} sm={12} className="info-container">
+            <Grid item >
+            <InputLabel htmlFor="my-input" className="labelField">Bio </InputLabel>
+                <p style={{color:'black'}} className="TextField">{bio}</p>
+                </Grid>
+                <Grid item>
+            <InputLabel htmlFor="my-input" className="labelField">LinkedIn </InputLabel>
+                <p className="TextField">{linkedIn}</p>
+                </Grid>
+                <Grid item>
+            <InputLabel htmlFor="my-input" className="labelField">GitHub</InputLabel>
+                <p  className="TextField">{gitHub}</p>
+                </Grid>
+                <Grid item  className="button">
+               <Button  variant="contained" color="warning" onClick={handleOpen} >Edit</Button>
+               <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box  sx={style}>
+        <form onSubmit={handleSubmit}>
+ <Grid sm={12} className="info-container">
 
-              <input
-                className="TextField"
-                disabled
-                id="outlined-disabled"
-                defaultValue={momMembers.join(' - ')}
-                color="warning"
-              />
-              </div>
-            </CardContent>
-          </Card>
+  <Grid xs={12} sm={12} item className="test">
+ <TextField placeholder="Enter your bio" label="bio" variant="outlined" fullWidth required multiline value={bio} onChange={(e)=>setBio(e.target.value)} color="warning"/>
+ </Grid>
+ <Grid xs={12} sm={12} item className="test">
+   <TextField placeholder="Enter your LinkedIn" label="LinkedIn" variant="outlined" fullWidth required multiline  value={linkedIn}color="warning" onChange={(e)=>setLinkedIn(e.target.value)}/>
+  </Grid>
+<Grid xs={12} sm={12} item className="test">
+
+   <TextField placeholder="Enter your Github" label="Github" variant="outlined" fullWidth required multiline value={gitHub}color="warning" onChange={(e)=>setGitHub(e.target.value)}/>
+
+  </Grid>
+  <Grid container spacing={1}>
+  <Grid item xs={12} >
+     <Button type="submit" variant="contained" color="warning" fullWidth >Submit</Button>
+   </Grid>
+  </Grid>
+</Grid>
+</form>
+        </Box>
+      </Modal>
+                </Grid>
+          </Grid>
+       
+        </Grid>
+
+        <Grid  item sm={12} xs={12}  md={6}  className='Profile-dis-Part'>
+                <InputLabel htmlFor="my-input" className="labelField">First Name </InputLabel>
+                <input id="my-input" aria-describedby="my-helper-text"defaultValue={name} disabled className="TextField"/>
+                <InputLabel htmlFor="my-input" className="labelField" >Last Name </InputLabel>
+                <input id="my-input" aria-describedby="my-helper-text"defaultValue={lastName} disabled className="TextField"/>
+                <InputLabel htmlFor="my-input" className="labelField">Email</InputLabel>
+                <input id="my-input" aria-describedby="my-helper-text"defaultValue={email} disabled className="TextField"/>
+                <InputLabel htmlFor="my-input" className="labelField">Course</InputLabel>
+                <input id="my-input" aria-describedby="my-helper-text" defaultValue={courseName} disabled color="warning" className="TextField"/>
+                <InputLabel htmlFor="my-input" className="labelField">Mob name</InputLabel>
+                <input id="my-input" aria-describedby="my-helper-text"defaultValue={mobName} disabled className="TextField"/>
+                <InputLabel htmlFor="my-input" className="labelField">Instructors</InputLabel>
+                <input id="my-input" aria-describedby="my-helper-text" defaultValue="Wietse,Dasha" disabled className="TextField"/>
+                <InputLabel htmlFor="my-input" className="labelField">Mob Members:</InputLabel>
+                <input id="my-input" aria-describedby="my-helper-text" defaultValue={momMembers.join(' - ')} disabled className="TextField"/>
+        </Grid>
+    </Grid>
         </div>
-      </div>
       <Footer />
     </>
   );
 };
 
 export default ProfileSetting;
+
+
+

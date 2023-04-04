@@ -57,5 +57,21 @@ app.get('/api/courseusers/:id', async (req, res) => {
     res.status(500).json({ error: 'An error occurred while fetching data' });
   }
 });
+app.put('/api/infousers/:id', async (req, res) => {
+  const { id } = req.params;
+  const { bio, linkedIn, gitHub } = req.body;
+
+  try {
+    const result = await db.UpdateUsersByUserId(id, bio, linkedIn, gitHub);
+    if (result === null) {
+      res.status(404).send('User not found');
+    } else {
+      res.status(200).send('User updated successfully');
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal server error');
+  }
+});
 
 app.listen(port, () => console.log(`Running on http://localhost:${port}`));

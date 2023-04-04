@@ -16,9 +16,8 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import HomeIcon from '@mui/icons-material/Home';
-import { ListItemIcon } from '@mui/material';
+import { Avatar, ListItemIcon } from '@mui/material';
 import TaskIcon from '@mui/icons-material/Task';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Link } from 'react-router-dom';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
@@ -129,7 +128,20 @@ export default function PersistentDrawerLeft() {
         </DrawerHeader>
         <Divider />
         <List>
+        <Link to='/profile' style={{color: 'white'}}>
+            <ListItem key={'My Profile'} disablePadding>
+                <ListItemButton>
+                  <ListItemIcon>
+                  <Avatar alt="Profile" src={localStorage.getItem('picture')!} sx={{ width: 24, height: 24 }}/>
+                  </ListItemIcon>
+                  <ListItemText primary={'My Profile'} />
+                </ListItemButton>
+            </ListItem>
+          </Link>
+          
+
           <Link to='/' style={{color: 'white'}}>
+
             <ListItem key={'Dashboard'} disablePadding>
                 <ListItemButton>
                   <ListItemIcon>
@@ -149,16 +161,7 @@ export default function PersistentDrawerLeft() {
                 </ListItemButton>
             </ListItem>
           </Link>
-          <Link to='/profile' style={{color: 'white'}}>
-            <ListItem key={'My Profile'} disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>
-                    <AccountCircleIcon style={{color: 'white'}}/>
-                  </ListItemIcon>
-                  <ListItemText primary={'My Profile'} />
-                </ListItemButton>
-            </ListItem>
-          </Link>
+
         </List>
       </Drawer>
       <br/>
