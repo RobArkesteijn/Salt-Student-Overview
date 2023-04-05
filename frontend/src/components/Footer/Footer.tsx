@@ -38,7 +38,8 @@ const theme = createTheme({
         backgroundColor: "#ff7961",
         paddingTop: "1rem",
         paddingBottom: "1rem",
-        marginTop:"1rem"
+        marginTop:"1rem",
+        position:'fixed'
       }}
     >
       <Container maxWidth="lg">

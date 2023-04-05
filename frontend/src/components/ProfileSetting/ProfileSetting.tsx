@@ -5,6 +5,9 @@ import Footer from "../Footer/Footer";
 import Navbar from "../NavBar/NavBar";
 import axios from "axios";
 import { Box, Button, Grid, InputLabel, Modal, TextField   } from "@mui/material";
+import PersonPinIcon from '@mui/icons-material/PersonPin';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import GitHubIcon from '@mui/icons-material/GitHub';
 
 type UserData = {
   id: number,
@@ -136,24 +139,35 @@ const ProfileSetting = () => {
   <>
     <Navbar />
     <div className="main-profile-div" >
-     <Grid container spacing={1} style={{display:'flex',justifyContent:'space-evenly'}}>
+     <Grid container spacing={1} style={{display:'flex',justifyContent:'space-evenly',overflow:'scroll'}}>
         <Grid  item sm={12} xs={12} md={4}   className='Profile-image-Part'>
           <div className="image-container" >
           <img alt="profile" src={localStorage.getItem('picture')!} className="image"/>
           </div>
           <Grid container xs={12} sm={12} className="info-container">
-            <Grid item >
+            <Grid item className="margin" style={{paddingLeft:'15px',wordBreak:'break-all'}} >
             <InputLabel htmlFor="my-input" className="labelField">Bio </InputLabel>
-                <p style={{color:'black'}} className="TextField">{bio}</p>
+            <Grid item style={{display:'flex',alignItems:'center'}}>
+                <PersonPinIcon/>
+                <div style={{color:'black'}} className="TextField">{bio}</div>
                 </Grid>
-                <Grid item>
+                </Grid>
+                <Grid item  className="margin"style={{paddingLeft:'15px',wordBreak:'break-all'}}>
             <InputLabel htmlFor="my-input" className="labelField">LinkedIn </InputLabel>
+            <Grid item style={{display:'flex',alignItems:'center'}}>
+            <LinkedInIcon/>
                 <p className="TextField">{linkedIn}</p>
                 </Grid>
-                <Grid item>
+                </Grid>
+                <Grid item  className="margin"style={{paddingLeft:'15px',wordBreak:'break-all'}}>
             <InputLabel htmlFor="my-input" className="labelField">GitHub</InputLabel>
+            <Grid item style={{display:'flex',alignItems:'center'}}>
+
+            <GitHubIcon />
                 <p  className="TextField">{gitHub}</p>
                 </Grid>
+                </Grid>
+
                 <Grid item  className="button">
                <Button  variant="contained" color="warning" onClick={handleOpen} >Edit</Button>
                <Modal
