@@ -1,10 +1,10 @@
 import React, {useState, useEffect} from "react";
 import "./ProfileSetting.scss";
-import toastr from 'toastr';
+import { toast } from 'react-toastify';
 import Footer from "../Footer/Footer";
 import Navbar from "../NavBar/NavBar";
 import axios from "axios";
-import { Box, Button, Grid, InputLabel, Modal, Paper, TextField, styled,   } from "@mui/material";
+import { Box, Button, Grid, InputLabel, Modal, TextField   } from "@mui/material";
 
 type UserData = {
   id: number,
@@ -92,7 +92,7 @@ const ProfileSetting = () => {
     setLinkedIn('');
     setGitHub('');
     getUserData();
-    toastr.success('User data updated successfully');
+    toast.success('User data updated successfully');
 
 
   } catch (error:any) {

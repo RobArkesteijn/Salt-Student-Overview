@@ -21,7 +21,7 @@ import TaskIcon from '@mui/icons-material/Task';
 import { Link } from 'react-router-dom';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
-import { textAlign } from '@mui/system';
+import ArticleIcon from '@mui/icons-material/Article';
 
 const drawerWidth = 240;
 
@@ -138,10 +138,7 @@ export default function PersistentDrawerLeft() {
                 </ListItemButton>
             </ListItem>
           </Link>
-          
-
           <Link to='/' style={{color: 'white'}}>
-
             <ListItem key={'Dashboard'} disablePadding>
                 <ListItemButton>
                   <ListItemIcon>
@@ -158,6 +155,16 @@ export default function PersistentDrawerLeft() {
                     <TaskIcon style={{color: 'white'}} />
                   </ListItemIcon>
                   <ListItemText primary={'Results'} />
+                </ListItemButton>
+            </ListItem>
+          </Link>
+          <Link to='/lectures' style={{color: 'white'}}>
+            <ListItem key={'lectures'} disablePadding>
+                <ListItemButton>
+                  <ListItemIcon>
+                    <ArticleIcon style={{color: 'white'}}/>
+                  </ListItemIcon>
+                  <ListItemText primary={'lectures'} />
                 </ListItemButton>
             </ListItem>
           </Link>
