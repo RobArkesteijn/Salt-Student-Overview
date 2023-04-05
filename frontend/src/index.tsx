@@ -6,6 +6,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { createClient } from '@supabase/supabase-js';
 import { SessionContextProvider } from '@supabase/auth-helpers-react';
+import './dayjs.d.ts';
 
 const supabase = createClient(
   "https://lfqvlqwtynlkfeyfuynu.supabase.co",

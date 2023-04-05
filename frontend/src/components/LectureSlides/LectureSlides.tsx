@@ -68,11 +68,11 @@ function LectureSlides() {
          {slides.map((slide, index) => {
 						return (
 						<TableRow className='slides-content'>
-							{index !== 0 &&
+							{slide.name !== '.emptyFolderPlaceholder' &&
 							<>
 								<TableCell><h3>{slide.name.split('-')[0]}</h3></TableCell>
 								<TableCell><h3>{slide.name.split('-')[1]}</h3></TableCell>
-								<TableCell><a href={CDNURL + slide.name} target="_blank" style={{color: 'blue'}}><h3 style={{display: 'flex', alignItems: 'center'}}>{slide.name.split('-')[2]}<DownloadIcon fontSize="small"/></h3></a></TableCell>
+								<TableCell><a href={CDNURL + slide.name} target="_blank" style={{color: 'blue'}}><h3 style={{display: 'flex', alignItems: 'center'}}><DownloadIcon fontSize="small"/>{slide.name.split('-').slice(2).join('-')}</h3></a></TableCell>
 							</>
 							}
 					 	</TableRow>
