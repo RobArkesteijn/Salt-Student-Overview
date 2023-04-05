@@ -2,7 +2,7 @@ import { Paper, Table, TableCell, TableContainer, TableHead, TableRow, Button, T
 import CloseIcon from '@mui/icons-material/Close';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import React, { ChangeEvent, useEffect, useState } from "react";
-const { v4: uuidv4 } = require('uuid');
+import { v4 as uuidv4 } from 'uuid';
 
 type UserDetails = {
   id: number,

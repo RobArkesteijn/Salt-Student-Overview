@@ -81,7 +81,7 @@ function LectureSlides() {
         </TableBody>
       </Table>
     </TableContainer>
-			<Footer />
+		<Footer />
     </>
   )
 }

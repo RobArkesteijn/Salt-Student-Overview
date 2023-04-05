@@ -113,7 +113,7 @@ function WelcomePage() {
   const [reFetchCalendar, setReFetchCalendar] = useState(false);
 
   const [user, setUser] = useState('');
-  const [feedback, setFeedback] = useState([]);
+  const [feedback, setFeedback] = useState<any[]>([]);
   const [topics, setTopics] = useState([]);
 
   const [loading, setLoading] = useState('loading');
@@ -306,6 +306,24 @@ function WelcomePage() {
   );
   const topicChunks = chunk(topics, 3);
 
+  const getClassNameForTestResult = (result: 'green' | 'red' | 'undefined') => {
+    switch (result) {
+      case 'green':
+        return 'testresult-table-row-el testresult-table-row-el-green';
+      case 'red':
+        return 'testresult-table-row-el testresult-table-row-el-red';
+      default:
+        return 'testresult-table-row-el testresult-table-row-el-undefined';
+    }
+  };
+
+  const getTestResultAtIndex = (index: number) => {
+    if (index < feedback.length) {
+      return feedback[index];
+    } else {
+      return { result: 'undefined' };
+    }
+  };
   return (
   <>
     {loading === 'loading' && <div className='loading'></div>}
@@ -317,34 +335,46 @@ function WelcomePage() {
       <Grid container spacing={3}>
         <Grid xs={12} sm={12} md={12} lg={5}>
           <Item onClick={() => setTestClicked(!testClicked)} className={`testresult ${testClicked ? 'item-clicked' : ''}`}>
-          <h2 className='testresult-title'>Weekend Test Results</h2>
-          <Grid container spacing={2}>
-
-            {feedback.map((item: PreviousTestsData, index) => (
-              <Grid xs={6}>
-                <div className={'testresult2 ' + item.result + 'Result'}>Week {index+1}</div>
-              </Grid>
-              ))}
-          </Grid>
-          {/* <table className='testresult-table'>
-            <tbody>
-              <tr className='testresult-table-row'>
-                <td className='testresult-table-row-el testresult-table-row-el-green'>Week 1</td>
-                <td className='testresult-table-row-el testresult-table-row-el-green'>Week 4</td>
-                <td className='testresult-table-row-el testresult-table-row-el-green'>Week 7</td>
-              </tr>
-              <tr className='testresult-table-row'>
-                <td className='testresult-table-row-el testresult-table-row-el-green'>Week 2</td>
-                <td className='testresult-table-row-el testresult-table-row-el-green'>Week 5</td>
-                <td className='testresult-table-row-el testresult-table-row-el-undefined'>Week 8</td>
-              </tr>
-              <tr className='testresult-table-row'>
-                <td className='testresult-table-row-el testresult-table-row-el-green'>Week 3</td>
-                <td className='testresult-table-row-el testresult-table-row-el-red'>Week 6</td>
-                <td className='testresult-table-row-el testresult-table-row-el-undefined'>Week 9</td>
-              </tr>
-            </tbody>
-          </table> */}
+            <h2 className='testresult-title'>Weekend Test Results</h2>
+            <Grid container spacing={2}>
+              <table className="testresult-table">
+                <tbody>
+                  <tr className="testresult-table-row">
+                    <td className={getClassNameForTestResult(getTestResultAtIndex(0)?.result || 'undefined')}>
+                      Week 1
+                    </td>
+                    <td className={getClassNameForTestResult(getTestResultAtIndex(1)?.result || 'undefined')}>
+                      Week 4
+                    </td>
+                    <td className={getClassNameForTestResult(getTestResultAtIndex(2)?.result || 'undefined')}>
+                      Week 7
+                    </td>
+                  </tr>
+                  <tr className="testresult-table-row">
+                    <td className={getClassNameForTestResult(getTestResultAtIndex(3)?.result || 'undefined')}>
+                      Week 2
+                    </td>
+                    <td className={getClassNameForTestResult(getTestResultAtIndex(4)?.result || 'undefined')}>
+                      Week 5
+                    </td>
+                    <td className={getClassNameForTestResult(getTestResultAtIndex(5)?.result || 'undefined')}>
+                      Week 8
+                    </td>
+                  </tr>
+                  <tr className="testresult-table-row">
+                    <td className={getClassNameForTestResult(getTestResultAtIndex(6)?.result || 'undefined')}>
+                      Week 3
+                    </td>
+                    <td className={getClassNameForTestResult(getTestResultAtIndex(7)?.result || 'undefined')}>
+                      Week 6
+                    </td>
+                    <td className={getClassNameForTestResult(getTestResultAtIndex(8)?.result || 'undefined')}>
+                      Week 9
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </Grid>
           </Item>
         </Grid>
         <Grid xs={12} sm={4} md={4} lg={2}>
