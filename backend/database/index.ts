@@ -1,5 +1,18 @@
 import db from './db';
 
+type UserFeedback = {
+  id: number,
+  user_id: number,
+  test_id: number,
+  feedback: string,
+  result: string
+}
+
+type UpdatedFeedback = {
+  feedback: string,
+  result: string
+}
+
 const getAllUsers = async () => {
   const user = await db.getAllUsers();
   return user;
@@ -34,6 +47,11 @@ const findCoursesById = async (courseId:string) => {
   return courseUsers;
 };
 
+const findTestById = async (id:string) => {
+  const test = await db.findTestById(id);
+  return test;
+};
+
 const findTestByCourseId = async (courseId:string) => {
   const test = await db.findTestByCourseId(courseId);
   return test;
@@ -53,6 +71,22 @@ const getUserDetailsByEmail = async (email: string) => {
   const users = await db.getUserDetailsByEmail(email);
   return users;
 };
+
+const postNewFeedback = async (data: UserFeedback) => {
+  const result = await db.postNewFeedback(data);
+  return result;
+};
+
+const updateFeedback = async (id: string, data: UpdatedFeedback) => {
+  const result = await db.updateFeedback(id, data);
+  return result;
+};
+
+const deleteFeedback = async (id: string) => {
+  const result = await db.deleteFeedback(id);
+  return result;
+};
+
 const UpdateUsersByUserId = async (
   UserId:string,
   userBio:string,
@@ -78,10 +112,14 @@ export default {
   getAllCourses,
   findUsersByMobId,
   findCoursesById,
+  findTestById,
   findTestByCourseId,
   findPreviousTestsById,
   getAllUserDetails,
   getUserDetailsByEmail,
+  postNewFeedback,
+  updateFeedback,
+  deleteFeedback,
   UpdateUsersByUserId,
   getAllTopics,
 };

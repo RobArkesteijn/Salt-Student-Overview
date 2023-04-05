@@ -35,7 +35,8 @@
     "sass": "^1.59.3",
     "sass-loader": "^13.2.1",
     "showdown": "^2.1.0",
-    "typescript": "^4.9.5"
+    "typescript": "^4.9.5",
+    "uuidv4": "^6.2.13"
   },
   "devDependencies": {
     "@types/axios": "^0.14.0",
