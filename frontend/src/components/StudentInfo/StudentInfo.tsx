@@ -3,6 +3,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
+import { toast } from "react-toastify";
 
 type UserDetails = {
   id: number,
@@ -200,7 +201,7 @@ const InstructorPage = () => {
       result: chosenResult
     }
     setRefreshModal(postData.id);
-
+    toast.loading('Posting result...'); 
     try {
       const response  = await fetch(apiUrl, {
         method: 'POST',
@@ -209,7 +210,8 @@ const InstructorPage = () => {
         },
         body: JSON.stringify(postData)
       });
-
+      toast.dismiss();
+      toast.success('Added test result!');
       const data = await response.json();
       console.log('Response data:', data);
     } catch (err) {
@@ -224,7 +226,7 @@ const InstructorPage = () => {
       feedback: feedbackEditModal,
       result: resultEditModal
     }
-
+    toast.loading('Updating result...'); 
     try {
       await fetch(apiUrl, {
         method: 'PUT',
@@ -233,6 +235,8 @@ const InstructorPage = () => {
         },
         body: JSON.stringify(postData)
       });
+      toast.dismiss();
+      toast.success('Updated test result!');
     } catch (err) {
       console.log(err);
     }
@@ -240,7 +244,8 @@ const InstructorPage = () => {
 
   const handleDeleteFeedback = async () => {
     handleCloseEditModal();
-    const apiUrl = `http://localhost:8080/api/deletefeedback/${testIdEditModal}`
+    const apiUrl = `http://localhost:8080/api/deletefeedback/${testIdEditModal}`;
+    toast.warning('Deleted result...'); 
 
     try {
       await fetch(apiUrl, {
