@@ -42,6 +42,12 @@ type Course = {
   name: string,
 };
 
+type Topic = {
+  id: number,
+  week_topic:string[],
+  week_number:number
+};
+
 type MobUsers = {
   id: number,
   email: string,
@@ -202,22 +208,24 @@ const UpdateUsersByUserId = async (
     return null;
   }
   return true;
+};
 
-  // const firstRow = result.rows[0];
-  // client.release();
-  // const userRows : Result = {
-  //   id: firstRow.id as number,
-  //   email: firstRow.email as string,
-  //   first_name: firstRow.first_name as string,
-  //   last_name: firstRow.last_name as string,
-  //   Role: firstRow.Role as string,
-  //   mob_id: firstRow.mob_id as number,
-  //   bio: firstRow.bio as string,
-  //   course_id: firstRow.bio as number,
-  //   github: firstRow.github as string,
-  //   linkedin: firstRow.linkedin as string,
-  // };
-  // return userRows;
+const getAllTopics = async () => {
+  const client = await pool.connect();
+  const result:{ rowCount: number, rows: Topic[] } = await client.query('SELECT * FROM "SaltDB"."WeekTopic"');
+  if (result.rowCount === 0) {
+    return [];
+  }
+  client.release();
+  const { rows } = result;
+  return rows.map(row => {
+    const coursesRow : Topic = {
+      id: row.id as number,
+      week_topic: row.week_topic as string[],
+      week_number: row.week_number as number,
+    };
+    return coursesRow;
+  });
 };
 
 // pool.query('SELECT * FROM "SaltDB"."Users" FULL OUTER
@@ -237,4 +245,5 @@ export default {
   findUsersByMobId,
   findCoursesById,
   UpdateUsersByUserId,
+  getAllTopics,
 };

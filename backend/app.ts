@@ -14,6 +14,10 @@ app.get('/api/users', async (req, res) => {
   const users = await db.getAllUsers();
   res.json(users);
 });
+app.get('/api/topics', async (req, res) => {
+  const topics = await db.getAllTopics();
+  res.json(topics);
+});
 
 app.get('/api/weekendtest', async (req, res) => {
   const weekendTest = await db.getAllWeekendTest();
