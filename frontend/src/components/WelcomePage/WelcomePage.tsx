@@ -77,25 +77,6 @@ interface gapiType {
   endTime: string
 }
 
-// type UserData = {
-//   id: number,
-//   email: string,
-//   first_name: string,
-//   last_name:string,
-//   Role:string,
-//   mob_id:number,
-//   course_id:number,
-// };
-
-// type PreviousTestsData = {
-//   id: number,
-//   name: string,
-//   user_id: number,
-//   test_id: number,
-//   feedback: string,
-//   result: string
-// }
-
 type UserData = {
   id: number,
   email: string,
@@ -133,6 +114,9 @@ function WelcomePage() {
 
   const [user, setUser] = useState('');
   const [feedback, setFeedback] = useState([]);
+  const [topics, setTopics] = useState([]);
+
+  const [loading, setLoading] = useState('loading');
 
   const session = useSession();
   const profilePicture = session?.user.user_metadata.picture;
@@ -143,6 +127,26 @@ function WelcomePage() {
   function capitalizeFirstLetter(str: string) {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
+
+  useEffect(() => {
+    if (localStorage.length !== 0){
+      axios.get('http://localhost:8080/api/users')
+        .then(data => {
+          const filteredData = data.data.filter((item: UserData) => {
+            return item.email === localStorage.getItem('email');
+          })
+          setUser(filteredData[0].id)
+          localStorage.setItem('role', filteredData[0].Role);
+          return filteredData;
+        }).then((user: UserData[]) => {
+          if (user[0].Role === 's') {
+            setLoading('done');
+          } else {
+            window.location.href = '/instructor';
+          }
+        })
+    } 
+  }, [session])
 
   async function createCalendarEvent() {
     const event = {
@@ -178,19 +182,6 @@ function WelcomePage() {
     setReFetchCalendar(!reFetchCalendar);
     toast.warning('Event deleted!')
   }
-
-  useEffect(() => {
-    const getUserData = async () => {
-      axios.get('http://localhost:8080/api/users')
-        .then((data) => {
-          const user = data.data.filter((user: UserData) => {
-            return user.email === localStorage.getItem('email');
-          });
-          setUser(user[0].id);
-        })
-    }
-    getUserData();
-  }, []);
 
   useEffect(() => {
     async function getCalendarEventWeek() {
@@ -296,11 +287,28 @@ function WelcomePage() {
 
   const startWeek = dayjs('2023-01-09').isoWeek();
   const currentWeek = dayjs().isoWeek();
-  const weekNumber = currentWeek - startWeek + 1; // add 1 to start from Week 1
+  const weekNumber = currentWeek - startWeek + 1;
   const today = dayjs().format('dddd');
+
+  useEffect(() => {
+    axios.get('http://localhost:8080/api/topics')
+      .then(data => {
+        const filteredData = data.data.filter((item: any) => item.week_number === weekNumber);
+        setTopics(filteredData[0].week_topic);
+      })
+  }, []);
+  const chunk = (arr: any, size: any) =>
+  arr.reduce(
+    (chunks: any, el: any, i: any) =>
+      (i % size ? chunks[chunks.length - 1].push(el) : chunks.push([el])) &&
+      chunks,
+    []
+  );
+  const topicChunks = chunk(topics, 3);
 
   return (
   <>
+    {loading === 'loading' && <div className='loading'></div>}
     <PrimarySearchAppBar />
     <div className='welcome'>
       {session && <h1 className='welcome-title'>{`welcome back ${capitalizeFirstLetter(session?.user.user_metadata.name.split(' ')[0])}`}</h1>}
@@ -350,16 +358,15 @@ function WelcomePage() {
           <Item onClick={() => setTopicClicked(!topicClicked)} className={`topic ${topicClicked ? 'item-clicked' : ''}`}>
             <h2 className='topic-title'>This Weeks Topics</h2>
             <div className='topic-container'>
-              <ul className='topic-container-list'>
-                <li className='topic-container-list-item'>React</li>
-                <li className='topic-container-list-item'>Components</li>
-                <li className='topic-container-list-item'>Hooks</li>
-              </ul>
-              <ul className='topic-container-list'>
-                <li className='topic-container-list-item'>Testing</li>
-                <li className='topic-container-list-item'>Classes</li>
-                <li className='topic-container-list-item'>Routing</li>
-              </ul>
+              {topicChunks.map((chunk: any, index: number) => (
+                <ul className='topic-container-list' key={index}>
+                  {chunk.map((topic: any, index: number) => (
+                    <li className='topic-container-list-item' key={index}>
+                      {topic.replace(/'/g, '')}
+                    </li>
+                  ))}
+                </ul>
+              ))}
             </div>
           </Item>
         </Grid>

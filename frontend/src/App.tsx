@@ -5,7 +5,6 @@ import WelcomePage from './components/WelcomePage/WelcomePage';
 import Login from './components/Login/Login';
 import ProfileSetting from './components/ProfileSetting/ProfileSetting';
 import TestResults from './components/TestResults/TestResults';
-import StudentInfo from './components/StudentInfo/StudentInfo';
 import LectureSlides from './components/LectureSlides/LectureSlides';
 import LectureUpload from './components/LectureUpload/LectureUpload';
 import InstructorPage from './components/InstructorPage/InstructorPage';

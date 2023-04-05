@@ -80,7 +80,7 @@ export default function PersistentDrawerLeft() {
       <CssBaseline />
       <AppBar position="fixed" open={open} style={{ background: "#ff7961" } }>
         <Toolbar>
-          <IconButton
+          {localStorage.getItem('role') === 's' && <IconButton
             color="inherit"
             aria-label="open drawer"
             onClick={handleDrawerOpen}
@@ -88,7 +88,7 @@ export default function PersistentDrawerLeft() {
             sx={{ mr: 2, ...(open && { display: 'none' }) }}
           >
             <MenuIcon />
-          </IconButton>
+          </IconButton>}
           <Typography variant="h6" noWrap component="div" style={{fontFamily: "Inconsolata"}}>
             <p>{'</salt>'}</p>
           </Typography>
