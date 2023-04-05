@@ -60,8 +60,8 @@ body {
         background-color: rgb(255, 121, 97);
         color: white;
         box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.6), 0px 1px 1px 0px rgba(0,0,0,0.54), 0px 1px 3px 0px rgba(0,0,0,0.52);
-        width: 50px;
-        height: 80px;
+        width: 65px;
+        height: 90px;
     }
 }
 
@@ -85,7 +85,7 @@ body {
             flex-direction: column;
             justify-content: space-around;
             height: 10vh;
-            width: 20vh;
+            width: 15vw;
             list-style: none;
             padding: 0;
             margin: 0 20px;
@@ -333,6 +333,9 @@ body {
 }
 
 @media (max-width: 600px) and (min-width: 400px) {
+  .topic-container-list {
+    width: 30vw !important;
+  }
   .calendar-grid {
     grid-template-columns: repeat(1, 1fr) !important;
     .calendar-grid-day-title {
@@ -357,6 +360,9 @@ body {
 }
 
 @media (max-width: 800px) and (min-width: 600px) {
+  .topic-container-list {
+    width: 20vw !important;
+  }
   .calendar-grid {
     grid-template-columns: repeat(2, 1fr) !important;
     .calendar-grid-day-title {
@@ -378,6 +384,9 @@ body {
 }
 
 @media (max-width: 1000px) and (min-width: 800px) {
+  .topic-container-list {
+    width: 20vw !important;
+  }
   .calendar-grid {
     grid-template-columns: repeat(7, 1fr) !important;
     .calendar-grid-day-title {
@@ -399,6 +408,9 @@ body {
 }
 
 @media (max-width: 1200px) and (min-width: 1000px) {
+  .topic-container-list {
+    width: 20vw !important;
+  }
   .calendar-grid {
     grid-template-columns: repeat(7, 1fr) !important;
     .calendar-grid-day-title {
@@ -439,141 +451,6 @@ body {
     }
   }
 }
-
-// .past-event {
-//   color: white !important;
-//   background-color: rgb(78, 210, 106) !important;
-// }
-
-// .during-event {
-//   color: white !important;
-//   background-color: rgb(232, 245, 91) !important;
-//   color: black !important;
-//   animation: pulse 1s infinite ease-in-out;
-// }
-
-// @keyframes pulse {
-//   0% {
-//     opacity: 0.75;
-//     transform: scale(1);
-//   }
-//   50% {
-//     opacity: 1;
-//     transform: scale(1.02);
-//   }
-//   100% {
-//     opacity: 0.75;
-//     transform: scale(1);
-//   }
-// }
-
-// @media (max-width: 600px) and (min-width: 400px) {
-//   .calendar-grid {
-//     grid-template-columns: repeat(1, 1fr) !important;
-//     .calendar-grid-day-title {
-//       width: 300px !important;
-//     }
-//     .calendar-schedule-box {
-//       width: 300px !important;
-//     }
-//   }
-//   .highlight {
-//     grid-template-columns: repeat(1, 1fr) !important;
-//     .highlight-schedule-title {
-//       width: 300px !important;
-//     }
-//     .highlight-schedule-box {
-//       width: 300px !important;
-//     }
-//   }
-//   .events-timeset {
-//     flex-direction: column !important;
-//   }
-// }
-
-// @media (max-width: 800px) and (min-width: 600px) {
-//   .calendar-grid {
-//     grid-template-columns: repeat(2, 1fr) !important;
-//     .calendar-grid-day-title {
-//       width: 250px !important;
-//     }
-//     .calendar-schedule-box {
-//       width: 250px !important;
-//     }
-//   }
-//   .highlight {
-//     grid-template-columns: repeat(1, 1fr) !important;
-//     .highlight-schedule-title {
-//       width: 300px !important;
-//     }
-//     .highlight-schedule-box {
-//       width: 300px !important;
-//     }
-//   }
-// }
-
-// @media (max-width: 1000px) and (min-width: 800px) {
-//   .calendar-grid {
-//     grid-template-columns: repeat(7, 1fr) !important;
-//     .calendar-grid-day-title {
-//       width: 95px !important;
-//     }
-//     .calendar-schedule-box {
-//       width: 90px !important;
-//     }
-//   }
-//   .highlight {
-//     grid-template-columns: repeat(3, 1fr) !important;
-//     .highlight-schedule-title {
-//       width: 220px !important;
-//     }
-//     .highlight-schedule-box {
-//       width: 220px !important;
-//     }
-//   }
-// }
-
-// @media (max-width: 1200px) and (min-width: 1000px) {
-//   .calendar-grid {
-//     grid-template-columns: repeat(7, 1fr) !important;
-//     .calendar-grid-day-title {
-//       width: 120px !important;
-//     }
-//     .calendar-schedule-box {
-//       width: 120px !important;
-//     }
-//   }
-//   .highlight {
-//     grid-template-columns: repeat(3, 1fr) !important;
-//     .highlight-schedule-title {
-//       width: 220px !important;
-//     }
-//     .highlight-schedule-box {
-//       width: 220px !important;
-//     }
-//   }
-// }
-
-// @media (max-width: 1400px) and (min-width: 1200px) {
-//   .calendar-grid {
-//     grid-template-columns: repeat(7, 1fr) !important;
-//     .calendar-grid-day-title {
-//       width: 150px !important;
-//     }
-//     .calendar-schedule-box {
-//       width: 150px !important;
-//     }
-//   }
-//   .highlight {
-//     grid-template-columns: repeat(3, 1fr) !important;
-//     .highlight-schedule-title {
-//       width: 250px !important;
-//     }
-//     .highlight-schedule-box {
-//       width: 250px !important;
-//     }
-//   }
-// }
 
 .testresult2 {
   padding: 10px;

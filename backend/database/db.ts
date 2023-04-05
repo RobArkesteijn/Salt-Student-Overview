@@ -56,7 +56,8 @@ type MobUsers = {
   last_name:string,
   Role:string,
   mob_name: string,
-  mob_id: number
+  mob_id: number,
+  name: string
 };
 
 type CoursesUsers = {
@@ -208,6 +209,7 @@ const findUsersByMobId = async (mobId:string) => {
       Role: row.Role as string,
       mob_id: row.mob_id as number,
       mob_name: row.mob_name as string,
+      name: row.name as string,
     };
     return mobRows;
   });
@@ -254,6 +256,68 @@ const findPreviousTestsById = async (userId: string) => {
     };
     return testFeedbackRow;
   })
+};
+
+const getAllUserDetails = async () => {
+  const client = await pool.connect();
+  const result:{ rowCount: number, rows: MobUsers[] } =
+    await client.query(`SELECT * FROM "SaltDB"."Users"
+      INNER JOIN "SaltDB"."Mob"
+      ON "SaltDB"."Users".mob_id = "SaltDB"."Mob".id
+      INNER JOIN "SaltDB"."Courses"
+      ON "SaltDB"."Users".course_id = "SaltDB"."Courses".id
+      WHERE "SaltDB"."Users"."Role" = 's'`
+      );
+
+  if (result.rowCount === 0) {
+    return [];
+  }
+  client.release();
+  const { rows } = result;
+  return rows.map(row => {
+    const mobRows : MobUsers = {
+      id: row.id as number,
+      email: row.email as string,
+      first_name: row.first_name as string,
+      last_name: row.last_name as string,
+      Role: row.Role as string,
+      mob_id: row.mob_id as number,
+      mob_name: row.mob_name as string,
+      name: row.name as string
+    };
+    return mobRows;
+  });
+};
+
+const getUserDetailsByEmail = async (email: string) => {
+  const client = await pool.connect();
+  const result:{ rowCount: number, rows: MobUsers[] } =
+    await client.query(`SELECT * FROM "SaltDB"."Users"
+      INNER JOIN "SaltDB"."Mob"
+      ON "SaltDB"."Users".mob_id = "SaltDB"."Mob".id
+      INNER JOIN "SaltDB"."Courses"
+      ON "SaltDB"."Users".course_id = "SaltDB"."Courses".id
+      WHERE "SaltDB"."Users".email = $1`, [email]
+      );
+
+  if (result.rowCount === 0) {
+    return [];
+  }
+  client.release();
+  const { rows } = result;
+  return rows.map(row => {
+    const mobRows : MobUsers = {
+      id: row.id as number,
+      email: row.email as string,
+      first_name: row.first_name as string,
+      last_name: row.last_name as string,
+      Role: row.Role as string,
+      mob_id: row.mob_id as number,
+      mob_name: row.mob_name as string,
+      name: row.name as string
+    };
+    return mobRows;
+  });
 };
 
 
@@ -309,6 +373,8 @@ export default {
   findCoursesById,
   findTestByCourseId,
   findPreviousTestsById,
+  getAllUserDetails,
+  getUserDetailsByEmail,
   UpdateUsersByUserId,
   getAllTopics,
 };

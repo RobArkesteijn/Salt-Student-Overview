@@ -294,6 +294,11 @@ function WelcomePage() {
     });
   }
 
+  const startWeek = dayjs('2023-01-09').isoWeek();
+  const currentWeek = dayjs().isoWeek();
+  const weekNumber = currentWeek - startWeek + 1; // add 1 to start from Week 1
+  const today = dayjs().format('dddd');
+
   return (
   <>
     <PrimarySearchAppBar />
@@ -337,8 +342,8 @@ function WelcomePage() {
         <Grid xs={12} sm={4} md={4} lg={2}>
           <Item onClick={() => setWDClicked(!WDClicked)} className={`weekdate ${WDClicked ? 'item-clicked' : ''}`}>
             <h3 className='weekdate-date'>Week</h3>
-            <h1 className='weekdate-weeknumber'>8</h1>
-            <h4 className='weekdate-day'>Friday</h4>
+            <h1 className='weekdate-weeknumber'>{weekNumber}</h1>
+            <h4 className='weekdate-day'>{today}</h4>
           </Item>
         </Grid>
         <Grid xs={12} sm={8} md={8} lg={5}>
