@@ -10,6 +10,10 @@ const getAllWeekendTest = async () => {
   return weekendTest;
 };
 
+const getAllTopics = async () => {
+  const weekendTopic = await db.getAllTopics();
+  return weekendTopic;
+};
 const getAllStudents = async () => {
   const students = await db.getAllStudents();
   return students;
@@ -67,4 +71,5 @@ export default {
   findTestByCourseId,
   findPreviousTestsById,
   UpdateUsersByUserId,
+  getAllTopics,
 };
