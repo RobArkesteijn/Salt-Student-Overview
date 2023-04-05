@@ -30,8 +30,9 @@ const theme = createTheme({
   });
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme} >
     <Box
+    
       sx={{
         width: "100%",
         height: "auto",
@@ -39,7 +40,8 @@ const theme = createTheme({
         paddingTop: "1rem",
         paddingBottom: "1rem",
         marginTop:"1rem",
-        position:'fixed'
+        position:'absolute'
+
       }}
     >
       <Container maxWidth="lg">
