@@ -128,8 +128,7 @@ const TestResults = () => {
   }));
 
   const PreviousTestButton = styled(Button)({
-    // color: 'rgb(255, 121, 97)',
-    color: 'white',
+    color: 'rgb(255, 121, 97)',
   });
 
   return (
@@ -212,7 +211,7 @@ const TestResults = () => {
                 {feedback && feedback.map((item: PreviousTestsData) => (
                   <Grid xs={3}>
                     <div className='test'>
-                      <PreviousTestButton variant='contained' onClick={() => handleOpen} className={item.result + 'Background'}>{item.name}</PreviousTestButton>
+                      <PreviousTestButton onClick={() => handleOpen(item.name, item.feedback)} className={item.result + 'Text'}>{item.name}</PreviousTestButton>
                       {/* {item.result === 'green' ?
                         <CheckIcon></CheckIcon>
                       : <CloseIcon></CloseIcon>

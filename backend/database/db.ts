@@ -61,7 +61,6 @@ type MobUsers = {
   mob_name: string,
   mob_id: number,
   name: string,
-  name: string
 };
 
 type CoursesUsers = {

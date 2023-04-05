@@ -321,7 +321,7 @@ function WelcomePage() {
           <Grid container spacing={2}>
 
             {feedback.map((item: PreviousTestsData, index) => (
-              <Grid xs={4}>
+              <Grid xs={6}>
                 <div className={'testresult2 ' + item.result + 'Result'}>Week {index+1}</div>
               </Grid>
               ))}
