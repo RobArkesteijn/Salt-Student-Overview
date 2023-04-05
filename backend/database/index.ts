@@ -8,6 +8,11 @@ type UserFeedback = {
   result: string
 }
 
+type UpdatedFeedback = {
+  feedback: string,
+  result: string
+}
+
 const getAllUsers = async () => {
   const user = await db.getAllUsers();
   return user;
@@ -68,8 +73,13 @@ const postNewFeedback = async (data: UserFeedback) => {
   return result;
 };
 
-const updateFeedback = async (data: UserFeedback) => {
-  const result = await db.updateFeedback(data);
+const updateFeedback = async (id: string, data: UpdatedFeedback) => {
+  const result = await db.updateFeedback(id, data);
+  return result;
+};
+
+const deleteFeedback = async (id: string) => {
+  const result = await db.deleteFeedback(id);
   return result;
 };
 
@@ -90,4 +100,5 @@ export default {
   getUserDetailsByEmail,
   postNewFeedback,
   updateFeedback,
+  deleteFeedback,
 };

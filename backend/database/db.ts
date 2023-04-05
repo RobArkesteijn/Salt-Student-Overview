@@ -75,6 +75,7 @@ type PreviousTest = {
 
 type PreviousTestUser = {
   id: number,
+  uuid: string,
   name: string,
   user_id: number,
   test_id: number,
@@ -86,6 +87,11 @@ type UserFeedback = {
   id: number,
   user_id: number,
   test_id: number,
+  feedback: string,
+  result: string
+}
+
+type UpdatedFeedback = {
   feedback: string,
   result: string
 }
@@ -261,7 +267,7 @@ const findTestById = async (id: string) => {
 const findPreviousTestsById = async (userId: string) => {
   const client = await pool.connect();
   // const result:{ rowCount: number, rows: PreviousTest[] } = await client.query(`SELECT * FROM "SaltDB"."TestFeedbacks" WHERE user_id=$1`, [Number(userId)]);
-  const result:{ rowCount: number, rows: PreviousTestUser[] } = await client.query(`SELECT * FROM "SaltDB"."TestFeedbacks" INNER JOIN "SaltDB"."WeekendTests" ON "SaltDB"."TestFeedbacks".test_id="SaltDB"."WeekendTests".id WHERE "SaltDB"."TestFeedbacks".user_id = $1`, [userId]);
+  const result:{ rowCount: number, rows: PreviousTestUser[] } = await client.query(`SELECT "SaltDB"."TestFeedbacks".id as uuid, * FROM "SaltDB"."TestFeedbacks" INNER JOIN "SaltDB"."WeekendTests" ON "SaltDB"."TestFeedbacks".test_id="SaltDB"."WeekendTests".id WHERE "SaltDB"."TestFeedbacks".user_id = $1`, [userId]);
   if (result.rowCount === 0) {
     return [];
   }
@@ -270,6 +276,7 @@ const findPreviousTestsById = async (userId: string) => {
   return rows.map(row => {
     const testFeedbackRow : PreviousTestUser = {
       id: row.id as number,
+      uuid: row.uuid as string,
       name: row.name as string,
       user_id: row.user_id as number,
       test_id: row.test_id as number,
@@ -347,7 +354,6 @@ const getUserDetailsByEmail = async (email: string) => {
 const postNewFeedback = async (data: UserFeedback) => {
   try {
     const client = await pool.connect();
-    console.log(data.user_id, data.feedback);
     const result = await client.query(
       `INSERT INTO "SaltDB"."TestFeedbacks" (id, user_id, test_id, feedback, result) VALUES ('${uuidv4()}', $1, $2, $3, $4)`,
       [data.user_id, data.test_id, data.feedback, data.result]
@@ -358,13 +364,27 @@ const postNewFeedback = async (data: UserFeedback) => {
   }
 }
 
-const updateFeedback = async (data: UserFeedback) => {
+const updateFeedback = async (id: string, data: UpdatedFeedback) => {
   try {
     const client = await pool.connect();
-    console.log(data.user_id, data.feedback);
     const result = await client.query(
-      `INSERT INTO "SaltDB"."TestFeedbacks" (id, user_id, test_id, feedback, result) VALUES ('${uuidv4()}', $1, $2, $3, $4)`,
-      [data.user_id, data.test_id, data.feedback, data.result]
+      `UPDATE "SaltDB"."TestFeedbacks"
+      SET feedback = $1, result = $2
+      WHERE id = '${id}'`,
+      [data.feedback, data.result]
+    );
+    client.release();
+  } catch (err) {
+    console.log('Error:', err);
+  }
+}
+
+const deleteFeedback = async (id: string) => {
+  try {
+    const client = await pool.connect();
+    const result = await client.query(
+      `DELETE FROM "SaltDB"."TestFeedbacks"
+      WHERE id = '${id}'`
     );
     client.release();
   } catch (err) {
@@ -395,4 +415,5 @@ export default {
   getUserDetailsByEmail,
   postNewFeedback,
   updateFeedback,
+  deleteFeedback,
 };

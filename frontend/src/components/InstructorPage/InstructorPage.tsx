@@ -4,6 +4,7 @@ import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import React, { ChangeEvent, useEffect, useState } from "react";
 import PrimarySearchAppBar from "../NavBar/NavBar";
 import './InstructorPage.scss';
+const { v4: uuidv4 } = require('uuid');
 
 type UserDetails = {
   id: number,
@@ -27,7 +28,8 @@ type TestData = {
 }
 
 type ChosenUserFeedback = {
-  id: number,
+  id: string,
+  uuid: string,
   name: string,
   user_id: number,
   test_id: number,
@@ -36,7 +38,7 @@ type ChosenUserFeedback = {
 }
 
 type UserFeedback = {
-  id: number,
+  id: string,
   user_id: number,
   test_id: number,
   feedback: string,
@@ -74,6 +76,8 @@ const InstructorPage = () => {
   const [feedbackEditModal, setFeedbackEditModal] = useState('');
   const [resultEditModal, setResultEditModal] = useState('');
 
+  const [refreshModal, setRefreshModal] = useState('');
+
   const handleOpen = (first_name: string, last_name: string, mob_name: string, user_id: number) => {
     setOpen(true);
     setModalFirstName(first_name);
@@ -82,22 +86,13 @@ const InstructorPage = () => {
     setModalUserId(user_id);
   }
 
-  const handleOpenEditModal = (test_id: number, name: string, feedback: string, result: string) => {
+  const handleOpenEditModal = (test_id: string, name: string, feedback: string, result: string) => {
     setOpenEditModal(true);
     setTestIdEditModal(String(test_id));
     setNameEditModal(name);
     setFeedbackEditModal(feedback);
     setResultEditModal(result);
   }
-
-  // useEffect(() => {
-  //   const getTestByCourseId = async () => {
-  //     const response = await fetch(`http://localhost:8080/api/weekendtestid/${testIdEditModal}`)
-  //     const data = await response.json();
-  //     setTestSelectEditModal(data[0].id);
-  //   };
-  //   getTestByCourseId();
-  // }, [testIdEditModal]);
 
   useEffect(() => {
     const getAllUserDetails = async () => {
@@ -137,7 +132,7 @@ const InstructorPage = () => {
       setUserFeedback(data);
     };
     getUserFeedback();
-  }, [modalUserId]);
+  }, [modalUserId, openEditModal, refreshModal]);
 
   const style = {
     position: 'absolute' as 'absolute',
@@ -147,6 +142,16 @@ const InstructorPage = () => {
     bgcolor: 'background.paper',
     padding: '20px 50px 20px 50px',
     width: '1000px'
+  };
+
+  const styleEdit = {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    bgcolor: 'background.paper',
+    padding: '20px 50px 20px 50px',
+    width: '500px'
   };
 
   const handleSort = (property: keyof UserDetails) => {
@@ -179,16 +184,24 @@ const InstructorPage = () => {
     setFeedbackText(event.target.value);
   };
 
+  const handleEditResult = (event: SelectChangeEvent<string>) => {
+    setResultEditModal(event.target.value);
+  };
+
+  const handleEditFeedback = (event: ChangeEvent<HTMLInputElement>) => {
+    setFeedbackEditModal(event.target.value);
+  };
+
   const handleSubmitFeedback = async () => {
     const apiUrl = 'http://localhost:8080/api/postfeedback';
     const postData: UserFeedback = {
-      id: 666,
+      id: uuidv4(),
       user_id: modalUserId,
       test_id: Number(chosenTest),
       feedback: feedbackText,
       result: chosenResult
     }
-    console.log(chosenTest);
+    setRefreshModal(postData.id);
 
     try {
       const response  = await fetch(apiUrl, {
@@ -201,6 +214,40 @@ const InstructorPage = () => {
 
       const data = await response.json();
       console.log('Response data:', data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleUpdateFeedback = async () => {
+    handleCloseEditModal();
+    const apiUrl = `http://localhost:8080/api/updatefeedback/${testIdEditModal}`
+    const postData = {
+      feedback: feedbackEditModal,
+      result: resultEditModal
+    }
+
+    try {
+      await fetch(apiUrl, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(postData)
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleDeleteFeedback = async () => {
+    handleCloseEditModal();
+    const apiUrl = `http://localhost:8080/api/deletefeedback/${testIdEditModal}`
+
+    try {
+      await fetch(apiUrl, {
+        method: 'DELETE',
+      });
     } catch (err) {
       console.log(err);
     }
@@ -417,59 +464,31 @@ const InstructorPage = () => {
                             {/* No feedback yet */}
                             {userFeedback.map((item: ChosenUserFeedback) => (
                               <>
-                                <Button onClick={() => handleOpenEditModal(item.test_id, item.name, item.feedback, item.result)} variant='contained' style={{margin: '5px', backgroundColor: item.result}}>{item.name}</Button>
+                                <Button onClick={() => handleOpenEditModal(item.uuid, item.name, item.feedback, item.result)} variant='contained' style={{margin: '5px', backgroundColor: item.result}}>{item.name}</Button>
                               </>
                             ))}
                             <Modal
                               open={openEditModal}
-                              onClose={handleCloseEditModal}
+                              // onClose={handleCloseEditModal}
                               aria-labelledby="modal-modal-title"
                               aria-describedby="modal-modal-description"
                             >
-                              <Box sx={style}>
+                              <Box sx={styleEdit}>
                                 <Typography id="modal-modal-title" variant="h6" component="h2" style={{position: 'relative', left: '-14px'}}>
                                   Edit Feedback | {nameEditModal}
                                 </Typography>
+                                <IconButton style={{position: 'absolute', left: '460px', bottom: '299px'}} onClick={handleCloseEditModal}>
+                                  <CloseIcon/>
+                                </IconButton>
                                   <br />
                                   <Grid container spacing={2}>
-                                    <Grid xs={4} style={{paddingRight: '10px'}}>
-                                      <SaltSelect variant="filled" style={{ width: '100%'}}>
-                                        <InputLabel>Course</InputLabel>
-                                        <Select
-                                          value={courseTest}
-                                          onChange={handleCourseTest}
-                                          label="Course"
-                                        >
-                                          <MenuItem value="">All</MenuItem>
-                                          <MenuItem value="500">JSFS</MenuItem>
-                                          <MenuItem value="501">JFS</MenuItem>
-                                          <MenuItem value="502">DNFS</MenuItem>
-                                        </Select>
-                                      </SaltSelect>
-                                    </Grid>
-
-                                    <Grid xs={8}>
-                                      <SaltSelect variant="filled" style={{ width: '100%'}}>
-                                        <InputLabel>Weekend test</InputLabel>
-                                        <Select
-                                          value={testIdEditModal}
-                                          onChange={handleTest}
-                                          label="Weekend Test"
-                                        >
-                                          {testSelect.map((item: TestData) => (
-                                            <MenuItem value={item.id}>{item.name} / {item.repo_name}</MenuItem>
-                                          ))}
-                                        </Select>
-                                      </SaltSelect>
-                                    </Grid>
-
                                     <Grid xs={12} style={{paddingTop: '10px'}}>
                                     <SaltSelect variant="filled" style={{ width: '100%'}}>
                                         <InputLabel id="course-filter-label">Result</InputLabel>
                                         <Select
                                           label="Result"
                                           value={resultEditModal}
-                                          // onChange={handleResult}
+                                          onChange={handleEditResult}
                                         >
                                           <MenuItem value="green">Green</MenuItem>
                                           <MenuItem value="red">Red</MenuItem>
@@ -480,7 +499,7 @@ const InstructorPage = () => {
                                     <Grid xs={12} style={{paddingTop: '10px'}}>
                                       <TextField
                                         value={feedbackEditModal}
-                                        // onChange={handleFeedback}
+                                        onChange={handleEditFeedback}
                                         variant="filled"
                                         label="Feedback"
                                         rows={4}
@@ -489,8 +508,12 @@ const InstructorPage = () => {
                                       />
                                     </Grid>
 
-                                    <Grid xs={4} style={{paddingTop: '10px'}}>
-                                      <Button variant='contained' onClick={handleSubmitFeedback} style={{backgroundColor: 'rgb(255, 121, 97)'}}>Add Feedback</Button>
+                                    <Grid xs={6} style={{paddingTop: '20px', paddingRight: '10px'}}>
+                                      <Button variant='contained' onClick={handleUpdateFeedback} style={{backgroundColor: 'rgb(255, 121, 97)', width: '100%'}}>Edit & Save</Button>
+                                    </Grid>
+
+                                    <Grid xs={6} style={{paddingTop: '20px', paddingLeft: '10px'}}>
+                                      <Button variant='contained' onClick={handleDeleteFeedback} style={{backgroundColor: 'rgb(255, 121, 97)', width: '100%'}}>Delete</Button>
                                     </Grid>
                                   </Grid>
                               </Box>

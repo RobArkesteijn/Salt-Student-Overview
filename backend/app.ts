@@ -127,9 +127,15 @@ app.post('/api/postfeedback', async (req, res) => {
 });
 
 app.put('/api/updatefeedback/:id', async (req, res) => {
+  const { id } = req.params;
   const data = req.body;
-  const result = await db.updateFeedback(data);
+  const result = await db.updateFeedback(id, data);
   res.json(result);
+});
+
+app.delete('/api/deletefeedback/:id', async (req, res) => {
+  const { id } = req.params;
+  await db.deleteFeedback(id);
 });
 
 app.listen(port, () => console.log(`Running on http://localhost:${port}`));
