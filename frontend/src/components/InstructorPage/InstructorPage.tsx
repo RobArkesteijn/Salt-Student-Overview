@@ -69,7 +69,8 @@ const InstructorPage = () => {
   const [chosenResult, setChosenResult] = useState('');
   const [feedbackText, setFeedbackText] = useState('');
 
-  const [testIdEditModal, setTestIdEditModal] = useState(0);
+  const [testIdEditModal, setTestIdEditModal] = useState('');
+  const [nameEditModal, setNameEditModal] = useState('');
   const [feedbackEditModal, setFeedbackEditModal] = useState('');
   const [resultEditModal, setResultEditModal] = useState('');
 
@@ -81,13 +82,22 @@ const InstructorPage = () => {
     setModalUserId(user_id);
   }
 
-  const handleOpenEditModal = (test_id: number, feedback: string, result: string) => {
+  const handleOpenEditModal = (test_id: number, name: string, feedback: string, result: string) => {
     setOpenEditModal(true);
-
-    setTestIdEditModal(test_id);
+    setTestIdEditModal(String(test_id));
+    setNameEditModal(name);
     setFeedbackEditModal(feedback);
     setResultEditModal(result);
   }
+
+  // useEffect(() => {
+  //   const getTestByCourseId = async () => {
+  //     const response = await fetch(`http://localhost:8080/api/weekendtestid/${testIdEditModal}`)
+  //     const data = await response.json();
+  //     setTestSelectEditModal(data[0].id);
+  //   };
+  //   getTestByCourseId();
+  // }, [testIdEditModal]);
 
   useEffect(() => {
     const getAllUserDetails = async () => {
@@ -407,7 +417,7 @@ const InstructorPage = () => {
                             {/* No feedback yet */}
                             {userFeedback.map((item: ChosenUserFeedback) => (
                               <>
-                                <Button onClick={() => handleOpenEditModal(item.test_id, item.feedback, item.result)} variant='contained' style={{margin: '5px', backgroundColor: item.result}}>{item.name}</Button>
+                                <Button onClick={() => handleOpenEditModal(item.test_id, item.name, item.feedback, item.result)} variant='contained' style={{margin: '5px', backgroundColor: item.result}}>{item.name}</Button>
                               </>
                             ))}
                             <Modal
@@ -418,7 +428,7 @@ const InstructorPage = () => {
                             >
                               <Box sx={style}>
                                 <Typography id="modal-modal-title" variant="h6" component="h2" style={{position: 'relative', left: '-14px'}}>
-                                  Edit Feedback
+                                  Edit Feedback | {nameEditModal}
                                 </Typography>
                                   <br />
                                   <Grid container spacing={2}>
@@ -442,7 +452,7 @@ const InstructorPage = () => {
                                       <SaltSelect variant="filled" style={{ width: '100%'}}>
                                         <InputLabel>Weekend test</InputLabel>
                                         <Select
-                                          value={chosenTest}
+                                          value={testIdEditModal}
                                           onChange={handleTest}
                                           label="Weekend Test"
                                         >

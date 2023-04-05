@@ -38,6 +38,11 @@ const findCoursesById = async (courseId:string) => {
   return courseUsers;
 };
 
+const findTestById = async (id:string) => {
+  const test = await db.findTestById(id);
+  return test;
+};
+
 const findTestByCourseId = async (courseId:string) => {
   const test = await db.findTestByCourseId(courseId);
   return test;
@@ -63,6 +68,11 @@ const postNewFeedback = async (data: UserFeedback) => {
   return result;
 };
 
+const updateFeedback = async (data: UserFeedback) => {
+  const result = await db.updateFeedback(data);
+  return result;
+};
+
 const index = () => console.log('test');
 
 export default {
@@ -73,9 +83,11 @@ export default {
   getAllCourses,
   findUsersByMobId,
   findCoursesById,
+  findTestById,
   findTestByCourseId,
   findPreviousTestsById,
   getAllUserDetails,
   getUserDetailsByEmail,
-  postNewFeedback
+  postNewFeedback,
+  updateFeedback,
 };

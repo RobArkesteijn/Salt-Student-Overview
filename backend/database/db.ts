@@ -237,6 +237,27 @@ const findTestByCourseId = async (courseId: string) => {
   });
 };
 
+const findTestById = async (id: string) => {
+  const client = await pool.connect();
+  const result:{ rowCount: number, rows: WeekendTest[] } = await client.query(`SELECT * FROM "SaltDB"."WeekendTests" WHERE id = $1`, [id]);
+  if (result.rowCount === 0) {
+    return [];
+  }
+  client.release();
+  const { rows } = result;
+  return rows.map(row => {
+    const weekendTestRow : WeekendTest = {
+      id: row.id as number,
+      name: row.name as string,
+      repo_name: row.repo_name as string,
+      repo_url: row.repo_url as string,
+      course_ids: row.course_ids as number[],
+      ongoing: row.ongoing as boolean,
+    };
+    return weekendTestRow;
+  });
+};
+
 const findPreviousTestsById = async (userId: string) => {
   const client = await pool.connect();
   // const result:{ rowCount: number, rows: PreviousTest[] } = await client.query(`SELECT * FROM "SaltDB"."TestFeedbacks" WHERE user_id=$1`, [Number(userId)]);
@@ -326,9 +347,20 @@ const getUserDetailsByEmail = async (email: string) => {
 const postNewFeedback = async (data: UserFeedback) => {
   try {
     const client = await pool.connect();
-    // const result = await client.query(
-    //   'INSERT INTO "SaltDB"."TestFeedbacks" VALUES (DEFAULT, $1)', [data]
-    // )
+    console.log(data.user_id, data.feedback);
+    const result = await client.query(
+      `INSERT INTO "SaltDB"."TestFeedbacks" (id, user_id, test_id, feedback, result) VALUES ('${uuidv4()}', $1, $2, $3, $4)`,
+      [data.user_id, data.test_id, data.feedback, data.result]
+    );
+    client.release();
+  } catch (err) {
+    console.log('Error:', err);
+  }
+}
+
+const updateFeedback = async (data: UserFeedback) => {
+  try {
+    const client = await pool.connect();
     console.log(data.user_id, data.feedback);
     const result = await client.query(
       `INSERT INTO "SaltDB"."TestFeedbacks" (id, user_id, test_id, feedback, result) VALUES ('${uuidv4()}', $1, $2, $3, $4)`,
@@ -356,9 +388,11 @@ export default {
   getAllCourses,
   findUsersByMobId,
   findCoursesById,
+  findTestById,
   findTestByCourseId,
   findPreviousTestsById,
   getAllUserDetails,
   getUserDetailsByEmail,
-  postNewFeedback
+  postNewFeedback,
+  updateFeedback,
 };

@@ -72,6 +72,20 @@ app.get('/api/weekendtestcourse/:id', async (req, res) => {
   }
 });
 
+app.get('/api/weekendtestid/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const test = await db.findTestById(id);
+    if (!test) {
+      res.status(404).json({ message: 'not found' });
+    } else {
+      res.json(test);
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'An error occurred while fetching data' });
+  }
+});
+
 app.get('/api/previoustests/:id', async (req, res) => {
   const { id } = req.params;
   try {
@@ -109,6 +123,12 @@ app.get('/api/getuserbyemail/:email', async (req, res) => {
 app.post('/api/postfeedback', async (req, res) => {
   const data = req.body;
   const result = await db.postNewFeedback(data);
+  res.json(result);
+});
+
+app.put('/api/updatefeedback/:id', async (req, res) => {
+  const data = req.body;
+  const result = await db.updateFeedback(data);
   res.json(result);
 });
 
