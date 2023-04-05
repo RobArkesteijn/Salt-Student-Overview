@@ -1,5 +1,13 @@
 import db from './db';
 
+type UserFeedback = {
+  id: number,
+  user_id: number,
+  test_id: number,
+  feedback: string,
+  result: string
+}
+
 const getAllUsers = async () => {
   const user = await db.getAllUsers();
   return user;
@@ -50,6 +58,11 @@ const getUserDetailsByEmail = async (email: string) => {
   return users;
 };
 
+const postNewFeedback = async (data: UserFeedback) => {
+  const result = await db.postNewFeedback(data);
+  return result;
+};
+
 const index = () => console.log('test');
 
 export default {
@@ -63,5 +76,6 @@ export default {
   findTestByCourseId,
   findPreviousTestsById,
   getAllUserDetails,
-  getUserDetailsByEmail
+  getUserDetailsByEmail,
+  postNewFeedback
 };

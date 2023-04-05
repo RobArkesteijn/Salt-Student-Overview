@@ -1,11 +1,13 @@
 import { Paper, Table, TableCell, TableContainer, TableHead, TableRow, Button, TableBody, TableSortLabel, FormControl, Select, MenuItem, InputLabel, TextField, SelectChangeEvent, Grid, styled, Modal, Box, Typography, IconButton } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
-import React, { useEffect, useState } from "react";
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import React, { ChangeEvent, useEffect, useState } from "react";
 import PrimarySearchAppBar from "../NavBar/NavBar";
 import './InstructorPage.scss';
 
 type UserDetails = {
   id: number,
+  user_id: number,
   email: string,
   first_name: string,
   last_name:string,
@@ -24,9 +26,17 @@ type TestData = {
   ongoing: boolean
 }
 
-type UserFeedback = {
+type ChosenUserFeedback = {
   id: number,
   name: string,
+  user_id: number,
+  test_id: number,
+  feedback: string,
+  result: string
+}
+
+type UserFeedback = {
+  id: number,
   user_id: number,
   test_id: number,
   feedback: string,
@@ -41,21 +51,42 @@ const InstructorPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [userDetails, setUserDetails] = useState([]);
   const [open, setOpen] = React.useState(false);
+  const [openEditModal, setOpenEditModal] = React.useState(false);
   const handleClose = () => setOpen(false);
+  const handleCloseEditModal = () => setOpenEditModal(false);
+  const [courseFilter, setCourseFilter] = useState('');
+  const [userFeedback, setUserFeedback] = useState([]);
+  const [userEmail, setUserEmail] = useState(localStorage.getItem('email'));
+  
   const [modalFirstName, setModalFirstName] = useState('');
   const [modalLastName, setModalLastName] = useState('');
   const [modalMobName, setModalMobName] = useState('');
-  const [courseFilter, setCourseFilter] = useState('');
+  const [modalUserId, setModalUserId] = useState(0);
+  
   const [courseTest, setCourseTest] = useState('');
   const [testSelect, setTestSelect] = useState([])
-  const [chosenSelect, setChosenSelect] = useState('');
-  const [userFeedback, setUserFeedback] = useState([]);
+  const [chosenTest, setChosenTest] = useState('');
+  const [chosenResult, setChosenResult] = useState('');
+  const [feedbackText, setFeedbackText] = useState('');
 
-  const handleOpen = (first_name: string, last_name: string, mob_name: string) => {
+  const [testIdEditModal, setTestIdEditModal] = useState(0);
+  const [feedbackEditModal, setFeedbackEditModal] = useState('');
+  const [resultEditModal, setResultEditModal] = useState('');
+
+  const handleOpen = (first_name: string, last_name: string, mob_name: string, user_id: number) => {
     setOpen(true);
     setModalFirstName(first_name);
     setModalLastName(last_name);
     setModalMobName(mob_name);
+    setModalUserId(user_id);
+  }
+
+  const handleOpenEditModal = (test_id: number, feedback: string, result: string) => {
+    setOpenEditModal(true);
+
+    setTestIdEditModal(test_id);
+    setFeedbackEditModal(feedback);
+    setResultEditModal(result);
   }
 
   useEffect(() => {
@@ -69,7 +100,7 @@ const InstructorPage = () => {
 
   useEffect(() => {
     const getUserByEmail = async () => {
-      const response = await fetch(`http://localhost:8080/api/getuserbyemail/${'ariano.wongsosetro@appliedtechnology.se'}`);
+      const response = await fetch(`http://localhost:8080/api/getuserbyemail/${userEmail}`);
       const data = await response.json();
       const courseName = data[0].name;
       const courseId = data[0].id;
@@ -78,7 +109,7 @@ const InstructorPage = () => {
       setCourseTest(courseIdString);
     };
     getUserByEmail();
-  }, [])
+  }, [userEmail])
 
   useEffect(() => {
     const getTestByCourseId = async () => {
@@ -91,13 +122,12 @@ const InstructorPage = () => {
 
   useEffect(() => {
     const getUserFeedback = async () => {
-      const response = await fetch(`http://localhost:8080/api/previoustests/100`)
+      const response = await fetch(`http://localhost:8080/api/previoustests/${modalUserId}`)
       const data = await response.json();
       setUserFeedback(data);
-      console.log(data);
     };
     getUserFeedback();
-  }, []);
+  }, [modalUserId]);
 
   const style = {
     position: 'absolute' as 'absolute',
@@ -128,7 +158,42 @@ const InstructorPage = () => {
   };
 
   const handleTest = (event: SelectChangeEvent<string>) => {
-    setChosenSelect(event.target.value);
+    setChosenTest(event.target.value);
+  };
+
+  const handleResult = (event: SelectChangeEvent<string>) => {
+    setChosenResult(event.target.value);
+  };
+
+  const handleFeedback = (event: ChangeEvent<HTMLInputElement>) => {
+    setFeedbackText(event.target.value);
+  };
+
+  const handleSubmitFeedback = async () => {
+    const apiUrl = 'http://localhost:8080/api/postfeedback';
+    const postData: UserFeedback = {
+      id: 666,
+      user_id: modalUserId,
+      test_id: Number(chosenTest),
+      feedback: feedbackText,
+      result: chosenResult
+    }
+    console.log(chosenTest);
+
+    try {
+      const response  = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(postData)
+      });
+
+      const data = await response.json();
+      console.log('Response data:', data);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const filteredRows = userDetails.filter((item: UserDetails) =>
@@ -244,12 +309,11 @@ const InstructorPage = () => {
                     <TableCell>{row.first_name} {row.last_name}</TableCell>
                     <TableCell>{row.mob_name}</TableCell>
                     <TableCell>{row.name}</TableCell>
-                    <TableCell style={{width: '200px'}}><Button variant='contained' onClick={() => handleOpen(row.first_name, row.last_name, row.mob_name)} style={{backgroundColor: 'rgb(255, 121, 97)'}}>Add Feedback</Button></TableCell>
+                    <TableCell style={{width: '200px'}}><Button variant='contained' onClick={() => handleOpen(row.first_name, row.last_name, row.mob_name, row.user_id)} style={{backgroundColor: 'rgb(255, 121, 97)', minWidth: '0', padding: '6px'}}><ModeEditIcon/></Button></TableCell>
                   </TableRow>
 
                   <Modal
                     open={open}
-                    // onClose={handleClose}
                     aria-labelledby="modal-modal-title"
                     aria-describedby="modal-modal-description"
                   >
@@ -291,12 +355,12 @@ const InstructorPage = () => {
                               <SaltSelect variant="filled" style={{ width: '100%'}}>
                                 <InputLabel>Weekend test</InputLabel>
                                 <Select
-                                  value={chosenSelect}
+                                  value={chosenTest}
                                   onChange={handleTest}
                                   label="Weekend Test"
                                 >
                                   {testSelect.map((item: TestData) => (
-                                    <MenuItem value={item.repo_name}>{item.name} / {item.repo_name}</MenuItem>
+                                    <MenuItem value={item.id}>{item.name} / {item.repo_name}</MenuItem>
                                   ))}
                                 </Select>
                               </SaltSelect>
@@ -307,6 +371,8 @@ const InstructorPage = () => {
                                 <InputLabel id="course-filter-label">Result</InputLabel>
                                 <Select
                                   label="Result"
+                                  value={chosenResult}
+                                  onChange={handleResult}
                                 >
                                   <MenuItem value="green">Green</MenuItem>
                                   <MenuItem value="red">Red</MenuItem>
@@ -316,6 +382,8 @@ const InstructorPage = () => {
 
                             <Grid xs={12} style={{paddingTop: '10px'}}>
                               <TextField
+                                value={feedbackText}
+                                onChange={handleFeedback}
                                 variant="filled"
                                 label="Feedback"
                                 rows={4}
@@ -325,7 +393,7 @@ const InstructorPage = () => {
                             </Grid>
 
                             <Grid xs={4} style={{paddingTop: '10px'}}>
-                              <Button variant='contained' onClick={() => handleOpen(row.first_name, row.last_name, row.mob_name)} style={{backgroundColor: 'rgb(255, 121, 97)'}}>Add</Button>
+                              <Button variant='contained' onClick={handleSubmitFeedback} style={{backgroundColor: 'rgb(255, 121, 97)'}}>Add Feedback</Button>
                             </Grid>
                           </Grid>
                         </Grid>
@@ -337,9 +405,86 @@ const InstructorPage = () => {
 
                           <Typography>
                             {/* No feedback yet */}
-                            {userFeedback.map((item: UserFeedback) => (
-                              <Button>{item.name}</Button>
+                            {userFeedback.map((item: ChosenUserFeedback) => (
+                              <>
+                                <Button onClick={() => handleOpenEditModal(item.test_id, item.feedback, item.result)} variant='contained' style={{margin: '5px', backgroundColor: item.result}}>{item.name}</Button>
+                              </>
                             ))}
+                            <Modal
+                              open={openEditModal}
+                              onClose={handleCloseEditModal}
+                              aria-labelledby="modal-modal-title"
+                              aria-describedby="modal-modal-description"
+                            >
+                              <Box sx={style}>
+                                <Typography id="modal-modal-title" variant="h6" component="h2" style={{position: 'relative', left: '-14px'}}>
+                                  Edit Feedback
+                                </Typography>
+                                  <br />
+                                  <Grid container spacing={2}>
+                                    <Grid xs={4} style={{paddingRight: '10px'}}>
+                                      <SaltSelect variant="filled" style={{ width: '100%'}}>
+                                        <InputLabel>Course</InputLabel>
+                                        <Select
+                                          value={courseTest}
+                                          onChange={handleCourseTest}
+                                          label="Course"
+                                        >
+                                          <MenuItem value="">All</MenuItem>
+                                          <MenuItem value="500">JSFS</MenuItem>
+                                          <MenuItem value="501">JFS</MenuItem>
+                                          <MenuItem value="502">DNFS</MenuItem>
+                                        </Select>
+                                      </SaltSelect>
+                                    </Grid>
+
+                                    <Grid xs={8}>
+                                      <SaltSelect variant="filled" style={{ width: '100%'}}>
+                                        <InputLabel>Weekend test</InputLabel>
+                                        <Select
+                                          value={chosenTest}
+                                          onChange={handleTest}
+                                          label="Weekend Test"
+                                        >
+                                          {testSelect.map((item: TestData) => (
+                                            <MenuItem value={item.id}>{item.name} / {item.repo_name}</MenuItem>
+                                          ))}
+                                        </Select>
+                                      </SaltSelect>
+                                    </Grid>
+
+                                    <Grid xs={12} style={{paddingTop: '10px'}}>
+                                    <SaltSelect variant="filled" style={{ width: '100%'}}>
+                                        <InputLabel id="course-filter-label">Result</InputLabel>
+                                        <Select
+                                          label="Result"
+                                          value={resultEditModal}
+                                          // onChange={handleResult}
+                                        >
+                                          <MenuItem value="green">Green</MenuItem>
+                                          <MenuItem value="red">Red</MenuItem>
+                                        </Select>
+                                      </SaltSelect>
+                                    </Grid>
+
+                                    <Grid xs={12} style={{paddingTop: '10px'}}>
+                                      <TextField
+                                        value={feedbackEditModal}
+                                        // onChange={handleFeedback}
+                                        variant="filled"
+                                        label="Feedback"
+                                        rows={4}
+                                        multiline
+                                        style={{ width: '100%'}}
+                                      />
+                                    </Grid>
+
+                                    <Grid xs={4} style={{paddingTop: '10px'}}>
+                                      <Button variant='contained' onClick={handleSubmitFeedback} style={{backgroundColor: 'rgb(255, 121, 97)'}}>Add Feedback</Button>
+                                    </Grid>
+                                  </Grid>
+                              </Box>
+                            </Modal>
                           </Typography>
                         </Grid>
                       </Grid>

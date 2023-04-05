@@ -1,6 +1,7 @@
 import { Pool } from 'pg';
 import path from 'path';
 import dotenv from 'dotenv';
+const { v4: uuidv4 } = require('uuid')
 
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 const user = process.env.POSTGRES_USER;
@@ -12,6 +13,7 @@ const pool = new Pool({
 
 type Result = {
   id: number,
+  user_id: number,
   email: string,
   first_name: string,
   last_name:string,
@@ -42,6 +44,7 @@ type Course = {
 
 type MobUsers = {
   id: number,
+  user_id: number,
   email: string,
   first_name: string,
   last_name:string,
@@ -79,6 +82,14 @@ type PreviousTestUser = {
   result: string
 }
 
+type UserFeedback = {
+  id: number,
+  user_id: number,
+  test_id: number,
+  feedback: string,
+  result: string
+}
+
 const getAllUsers = async () => {
   const client = await pool.connect();
   const result:{ rowCount: number, rows: Result[] } = await client.query('SELECT * FROM "SaltDB"."Users"');
@@ -90,6 +101,7 @@ const getAllUsers = async () => {
   return rows.map(row => {
     const userRow : Result = {
       id: row.id as number,
+      user_id: row.user_id as number,
       email: row.email as string,
       first_name: row.first_name as string,
       last_name: row.last_name as string,
@@ -191,6 +203,7 @@ const findUsersByMobId = async (mobId:string) => {
   return rows.map(row => {
     const mobRows : MobUsers = {
       id: row.id as number,
+      user_id: row.user_id as number,
       email: row.email as string,
       first_name: row.first_name as string,
       last_name: row.last_name as string,
@@ -249,7 +262,7 @@ const findPreviousTestsById = async (userId: string) => {
 const getAllUserDetails = async () => {
   const client = await pool.connect();
   const result:{ rowCount: number, rows: MobUsers[] } =
-    await client.query(`SELECT * FROM "SaltDB"."Users"
+    await client.query(`SELECT "SaltDB"."Users".id as user_id, * FROM "SaltDB"."Users"
       INNER JOIN "SaltDB"."Mob"
       ON "SaltDB"."Users".mob_id = "SaltDB"."Mob".id
       INNER JOIN "SaltDB"."Courses"
@@ -265,6 +278,7 @@ const getAllUserDetails = async () => {
   return rows.map(row => {
     const mobRows : MobUsers = {
       id: row.id as number,
+      user_id: row.user_id as number,
       email: row.email as string,
       first_name: row.first_name as string,
       last_name: row.last_name as string,
@@ -296,6 +310,7 @@ const getUserDetailsByEmail = async (email: string) => {
   return rows.map(row => {
     const mobRows : MobUsers = {
       id: row.id as number,
+      user_id: row.id as number,
       email: row.email as string,
       first_name: row.first_name as string,
       last_name: row.last_name as string,
@@ -307,6 +322,23 @@ const getUserDetailsByEmail = async (email: string) => {
     return mobRows;
   });
 };
+
+const postNewFeedback = async (data: UserFeedback) => {
+  try {
+    const client = await pool.connect();
+    // const result = await client.query(
+    //   'INSERT INTO "SaltDB"."TestFeedbacks" VALUES (DEFAULT, $1)', [data]
+    // )
+    console.log(data.user_id, data.feedback);
+    const result = await client.query(
+      `INSERT INTO "SaltDB"."TestFeedbacks" (id, user_id, test_id, feedback, result) VALUES ('${uuidv4()}', $1, $2, $3, $4)`,
+      [data.user_id, data.test_id, data.feedback, data.result]
+    );
+    client.release();
+  } catch (err) {
+    console.log('Error:', err);
+  }
+}
 
 // pool.query('SELECT * FROM "SaltDB"."Users" FULL OUTER
 // JOIN "SaltDB"."Mob" ON "SaltDB"."Mob"."id" = "SaltDB"."Users"."mob_id"', (err, res) => {
@@ -327,5 +359,6 @@ export default {
   findTestByCourseId,
   findPreviousTestsById,
   getAllUserDetails,
-  getUserDetailsByEmail
+  getUserDetailsByEmail,
+  postNewFeedback
 };

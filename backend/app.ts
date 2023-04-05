@@ -106,4 +106,10 @@ app.get('/api/getuserbyemail/:email', async (req, res) => {
   }
 });
 
+app.post('/api/postfeedback', async (req, res) => {
+  const data = req.body;
+  const result = await db.postNewFeedback(data);
+  res.json(result);
+});
+
 app.listen(port, () => console.log(`Running on http://localhost:${port}`));
